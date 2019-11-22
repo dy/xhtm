@@ -1,0 +1,42 @@
+{
+  "name": "xhtm",
+  "version": "0.0.2",
+  "description": "HTML Tagged Template syntax for Virtual DOM. Extension of HTM with HTML support.",
+  "main": "dist/xhtm.js",
+  "umd:main": "dist/xhtm.umd.js",
+  "module": "dist/xhtm.module.js",
+  "scripts": {
+    "start": "parcel serve --no-hmr test/index.html",
+    "build": "npm run -s build:main && npm run -s build:mini && npm run -s build:preact && npm run -s build:react && npm run -s build:babel && npm run -s build:babel-transform-jsx && npm run -s build:mjsalias",
+    "build:main": "microbundle src/index.mjs -f es,umd --no-sourcemap --target web && microbundle src/cjs.mjs -f iife --no-sourcemap --target web && cp src/index.d.ts dist",
+    "build:mini": "microbundle src/index.mjs -o ./mini/index.js -f es,umd --no-sourcemap --target web --alias ./constants.mjs=./constants-mini.mjs && microbundle src/cjs.mjs -o ./mini/index.js -f iife --no-sourcemap --target web --alias ./constants.mjs=./constants-mini.mjs && cp src/index.d.ts mini",
+    "build:mjsalias": "cp dist/xhtm.module.js dist/xhtm.mjs && cp mini/index.module.js mini/index.mjs && cp preact/index.module.js preact/index.mjs && cp preact/standalone.module.js preact/standalone.mjs && cp react/index.module.js react/index.mjs",
+    "test": "node -r esm test.js",
+    "test:perf": "v8 test/__perftest.mjs",
+    "release": "npm t && git commit -am \"$npm_package_version\" && git tag $npm_package_version && git push && git push --tags && npm publish"
+  },
+  "files": [
+    "dist",
+    "mini",
+    "src"
+  ],
+  "repository": "dy/xhtm",
+  "keywords": [
+    "Hyperscript Tagged Markup",
+    "tagged template",
+    "template literals",
+    "html",
+    "htm",
+    "jsx",
+    "virtual dom",
+    "hyperscript"
+  ],
+  "author": "Dmitry Yv <df.creative@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/dy/xhtm",
+  "devDependencies": {
+    "esm": "^3.2.25",
+    "microbundle": "^0.11.0",
+    "tape": "^4.11.0"
+  }
+}
