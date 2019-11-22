@@ -4,7 +4,6 @@ const createNode = (parent) => Object.assign(['', null ], { parent })
 
 export default function (...args) {
 	const h = this
-	const END = -1
 	let subargs = [{ raw: [] }]
 
 	let curr = MINI ? createNode(null) : []
@@ -12,13 +11,13 @@ export default function (...args) {
 	let i = -1, j = -1, str, char = '', buf = '', end, field
 
 	const next = (proceed, collect=true) => {
-		if (end) throw 'Malformed HTML'
+		if (end) throw 'Invalid HTML'
 
 		if (char && proceed) {
 			if (proceed.test) {
 				if (!proceed.test(char)) return
 			}
-			else if (char !== proceed) return
+			else if (!proceed(char)) return
 		}
 
 		if (j < 0) {
@@ -35,7 +34,6 @@ export default function (...args) {
 				}
 				field = null
 			}
-			if (i >= args[0].raw.length) return end = END
 			str = args[0].raw[i]
 			char = str[j]
 		}
@@ -55,6 +53,7 @@ export default function (...args) {
 			if (collect) {
 				buf += char
 			}
+			if (j >= str.length && i >= args.length - 1) return end = true
 			char = str[j]
 		}
 
@@ -81,18 +80,11 @@ export default function (...args) {
 			skip()
 
 			if (char === '/') {
-				// end tag
-				skip(/[^>]/)
-				skip()
-				if (MINI) {
-					curr.parent.push(h(...curr))
-				}
-				curr = curr.parent
-				text()
+				closeTag()
 			}
 			else {
 				curr = createNode(curr)
-				tag()
+				openTag()
 			}
 			return
 		}
@@ -101,7 +93,18 @@ export default function (...args) {
 		text()
 	}
 
-	const tag = () => {
+	const closeTag = () => {
+		// end tag
+		skip(/[^>]/)
+		skip()
+		if (MINI) {
+			curr.parent.push(h(...curr))
+		}
+		curr = curr.parent
+		text()
+	}
+
+	const openTag = () => {
 		next(/[^\s/>]/)
 		curr[0] = commit(tagTpl)
 		props()
@@ -116,39 +119,46 @@ export default function (...args) {
 			return
 		}
 		else if (char === '/') {
-			skip(), skip()
-
-			// close element
-			if (MINI) {
-				curr.parent.push(h(...curr))
-			}
-			curr = curr.parent
-			text()
+			closeTag()
 			return
 		}
 
-		// new attribute
-		next(/[^=\s]/)
-		let prop = commit(nameTpl), value
+		if (!curr[1]) curr[1] = {}
+		let currProps = curr[1]
 
-		// parse prop value
-		if (char === '=') {
-			skip()
-			let quote
-			if (char === '"' || char === "'") {
-				quote = char
-				skip()
-				next(quote)
-				value = commit(valueTpl)
-				skip()
-			}
-			else {
-				next(/[^\s]/)
-				value = commit(valueTpl)
-			}
+		// new attribute
+		let prop = parseName(/[^\s=/]/, nameTpl)
+		currProps[prop] = true
+
+		// a bit htm-specific rules
+		if (char === '/') {
+			closeTag()
+			return
 		}
-		(curr[1] || (curr[1] = {}))[prop] = value
+		// parse value
+		else if (char === '=') {
+			skip()
+			// htm-specific rule
+			let value = parseName(c => /[^\s>]/.test(c) && !(str[j+1] === '>' && c === '/'), valueTpl)
+			currProps[prop] = value
+		}
+
 		props()
+	}
+
+	const parseName = (re, tpl) => {
+		let quote, value
+		if (char === '"' || char === "'") {
+			quote = char
+			skip()
+			next(c => c !== quote)
+			skip()
+		}
+		else {
+			next(re)
+		}
+		value = commit(tpl)
+		return value
 	}
 
 	next()

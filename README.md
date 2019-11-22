@@ -17,8 +17,8 @@ Because _htm_ is intended to be [JSX-compatible](https://github.com/developit/ht
 ## Improvements over HTM
 
 * HTML syntax support.
-* Optionally closed tags [#91](https://github.com/developit/htm/issues/91).
-* HTML directives [#91](https://github.com/developit/htm/issues/91).
+* Optionally closed tags support [#91](https://github.com/developit/htm/issues/91).
+* HTML directives support [#91](https://github.com/developit/htm/issues/91).
 * Dynamic attribute names [#124](https://github.com/developit/htm/issues/124).
 * Calculated tag names [#109](https://github.com/developit/htm/issues/109).
 * Ignoring null-like arguments (customizable) [#129](https://github.com/developit/htm/issues/129).
@@ -26,7 +26,7 @@ Because _htm_ is intended to be [JSX-compatible](https://github.com/developit/ht
 * Escaping quotes [#96](https://github.com/developit/htm/issues/96).
 * Customizable template parts.
 * Simple validation.
-* Smaller.
+* Smaller size.
 * Faster.
 
 <!-- * Parent reference for non-JSX template engines.-->
@@ -34,7 +34,7 @@ Because _htm_ is intended to be [JSX-compatible](https://github.com/developit/ht
 ## Differences from HTM
 
 * No integrations exported.
-* No babel compilers available (for now).
+* No babel compilers available (temporarily).
 * Simplified tests runner.
 * Simplified significant part of source code.
 
