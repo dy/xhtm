@@ -8,54 +8,51 @@ export default function (...args) {
 
 	let curr = MINI ? createNode(null) : []
 
-	let i = -1, j = -1, str, char = '', buf = '', end, field
+	let i = 0, j = -1, str, char = '', buf = '', end, field
 
 	const next = (proceed, collect=true) => {
 		if (end) throw 'Invalid HTML'
 
-		if (char && proceed) {
+		if (proceed) {
 			if (proceed.test) {
-				if (!proceed.test(char)) return
+				if (char && !proceed.test(char)) return
 			}
 			else if (!proceed(char)) return
 		}
 
+		// curr - field or init
 		if (j < 0) {
-			j = 0
-			i++
-			// static part
 			if (collect) {
-				if (i >= 0) {
-					// new args must start and end with empty string
-					if (!subargs[0].raw.length) {
-						subargs[0].raw.push('')
-					}
+				if (i > 0) {
+					subargs[0].raw.push(buf)
+					buf = ''
 					subargs.push(field)
 				}
 				field = null
 			}
 			str = args[0].raw[i]
+			j = 0
+			char = str ? str[j] : ''
+		}
+		// curr - static part
+		else if (j < str.length - 1) {
+			if (collect) buf += char
+			j++
 			char = str[j]
 		}
-		else if (j === str.length) {
-			j = -1
-			// field
-			if (collect) {
-				subargs[0].raw.push(buf)
-				buf = ''
-			}
-			char = ''
-			field = MINI ? args[i+1] : i+1
-		}
-		// mid of static part
+		// curr - last of static part
 		else {
-			j++
 			if (collect) {
 				buf += char
 			}
-			if (j >= str.length && i >= args.length - 1) return end = true
-			char = str[j]
+			j = -1
+			char = ''
+			i++
+			str = ''
+			field = MINI ? args[i] : i
 		}
+
+			if (i >= args.length) return end = true
 
 		if (proceed) return next(proceed, collect)
 	}
@@ -72,11 +69,11 @@ export default function (...args) {
 
 	const text = () => {
 		if (end) {
-			curr.push(...commit(textTpl))
+			curr.push(...commit(textTpl).filter(c => c !== ''))
 			return curr
 		}
 		if (char === '<') {
-			if (subargs.length > 1) curr.push(...commit(textTpl))
+			curr.push(...commit(textTpl).filter(c => c !== ''))
 			skip()
 
 			if (char === '/') {
@@ -107,12 +104,11 @@ export default function (...args) {
 	const openTag = () => {
 		next(/[^\s/>]/)
 		curr[0] = commit(tagTpl)
+		skip(/\s/)
 		props()
 	}
 
 	const props = () => {
-		skip(/\s/)
-
 		if (char === '>') {
 			skip()
 			text()
@@ -126,27 +122,38 @@ export default function (...args) {
 		if (!curr[1]) curr[1] = {}
 		let currProps = curr[1]
 
-		// new attribute
-		let prop = parseName(/[^\s=/]/, nameTpl)
-		currProps[prop] = true
+		// catch spread
+		if (char === '.') {
+			next(c => {
+				return c === '.' || c
+			})
+			if (buf === '...') {
+				Object.assign(currProps, field)
+				buf = ''
+				skip()
+				return props()
+			}
+		}
 
-		// a bit htm-specific rules
-		if (char === '/') {
-			closeTag()
-			return
+		// new attribute
+		let prop = value(/[^\s=/>]/, nameTpl)
+		if (prop) {
+			currProps[prop] = true
 		}
 		// parse value
-		else if (char === '=') {
+		if (char === '=') {
 			skip()
 			// htm-specific rule
-			let value = parseName(c => /[^\s>]/.test(c) && !(str[j+1] === '>' && c === '/'), valueTpl)
-			currProps[prop] = value
+			// FIXME: maybe that's more reasonable to allow props with / as well, that would shrink this part
+			let val = value(c => (/[^\s>]/.test(c) && !(c === '/' && str[j+1] === '>')) || !c, valueTpl)
+			currProps[prop] = val
 		}
 
+		skip(/\s/)
 		props()
 	}
 
-	const parseName = (re, tpl) => {
+	const value = (re, tpl) => {
 		let quote, value
 		if (char === '"' || char === "'") {
 			quote = char
@@ -178,9 +185,12 @@ const nameTpl = valueTpl
 
 const textTpl = (statics, ...fields) => {
 	let arr = []
-	statics.raw.map((value, i) => {
-		if (value === 0 || value) arr.push(value)
-		if (fields[i] === 0 || fields[i]) arr.push(fields[i])
-	})
+	for (let i = 0; i < statics.raw.length; i++ ) {
+		let value = statics.raw[i]
+		// if (value === 0 || value)
+		arr.push(value)
+		// if (fields[i] === 0 || fields[i])
+		if (i < fields.length) arr.push(fields[i])
+	}
 	return arr
 }

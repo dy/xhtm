@@ -105,7 +105,7 @@ t('prop with multiple static and dynamic values get concatenated as strings', (t
   t.end()
 });
 
-t.only('spread props', (t) => {
+t('spread props', (t) => {
   t.deepEqual(html`<a ...${{ foo: 'bar' }} />`, { tag: 'a', props: { foo: 'bar' }, children: [] });
   t.deepEqual(html`<a b ...${{ foo: 'bar' }} />`, { tag: 'a', props: { b: true, foo: 'bar' }, children: [] });
   t.deepEqual(html`<a b c ...${{ foo: 'bar' }} />`, { tag: 'a', props: { b: true, c: true, foo: 'bar' }, children: [] });
@@ -145,6 +145,7 @@ t('non-element roots', (t) => {
   t.deepEqual(html`foo`, 'foo');
   t.deepEqual(html`${1}`, 1);
   t.deepEqual(html`foo${1}`, ['foo', 1]);
+  t.deepEqual(html`${1}foo`, [1, 'foo']);
   t.deepEqual(html`foo${1}bar`, ['foo', 1, 'bar']);
   t.end()
 });
@@ -186,15 +187,6 @@ t('mixed typed children', (t) => {
   t.deepEqual(html`<a><b />bar</a>`, h('a', null, h('b', null), 'bar'));
   t.deepEqual(html`<a>before<b />after</a>`, h('a', null, 'before', h('b', null), 'after'));
   t.deepEqual(html`<a>before<b x=1 />after</a>`, h('a', null, 'before', h('b', { x: '1' }), 'after'));
-  t.deepEqual(html`
-			<a>
-				before
-				${'foo'}
-				<b />
-				${'bar'}
-				after
-			</a>
-		`, h('a', null, 'before', 'foo', h('b', null), 'bar', 'after'));
   t.end()
 });
 
