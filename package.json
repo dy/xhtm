@@ -9,8 +9,7 @@
     "start": "parcel serve --no-hmr test/index.html",
     "build": "npm run -s build:main && npm run -s build:mini",
     "build:main": "microbundle src/index.js -f es,umd --no-sourcemap --target web",
-    "build:mini": "microbundle src/index.js -o ./mini/index.js -f es,umd --no-sourcemap --target web --alias ./constants.js=./constants-mini.js",
-    "test": "node -r esm test.js",
+    "test": "node -r esm test/index.test.js",
     "test:perf": "v8 test/__perftest.js",
     "release": "npm t && git commit -am \"$npm_package_version\" && git tag $npm_package_version && git push && git push --tags && npm publish"
   },
@@ -35,6 +34,7 @@
   "homepage": "https://github.com/dy/xhtm",
   "devDependencies": {
     "@babel/preset-env": "^7.7.4",
+    "@babel/preset-modules": "^0.1.1",
     "esm": "^3.2.25",
     "microbundle": "^0.11.0",
     "tape": "^4.11.0"

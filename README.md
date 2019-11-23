@@ -11,7 +11,7 @@
   <img src="https://i.imgur.com/0ph8dbS.png" width="572" alt="hyperscript tagged markup demo">
 </p>
 
-`xhtm` provides alternative implementation of `htm`, with HTML syntax support and additional features.
+`xhtm` provides alternative functional implementation of `htm`, with HTML syntax support and additional features.
 Because _htm_ is intended to be [JSX-compatible](https://github.com/developit/htm/issues/91#issuecomment-498741042), not HTML-compatible.
 
 ## Improvements over HTM

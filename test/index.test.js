@@ -6,13 +6,18 @@ const html = htm.bind((tag, props, ...children) => {
 	return { tag, props, children }
 });
 
+t.only('base case', t => {
+	t.deepEqual(html`foo <a bar>baz${'qux'}</a>`, ['foo ', { tag: 'a', props: { bar: true }, children: ['baz', 'qux'] }])
+	t.end()
+})
+
 t('plain text', t => {
 	t.deepEqual(html`a`, `a`)
 	t.deepEqual(html`a${'b'}c`, ['a', 'b', 'c'])
 	t.deepEqual(html`a${1}b${2}c`, ['a', 1, 'b', 2, 'c'])
 	t.deepEqual(html`foo${''}bar${''}`, ['foo', 'bar'])
 	t.deepEqual(html`${'foo'}${'bar'}`, ['foo', 'bar'])
-	// t.deepEqual(html`${''}${''}`, ['', ''])
+	t.deepEqual(html`${''}${''}`, ['', ''])
 	t.end()
 })
 
