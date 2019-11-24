@@ -3,9 +3,7 @@ module.exports = {
 		[
 			'@babel/preset-modules',
 			{
-				targets: {
-					node: 'current'
-				}
+				loose: true
 			}
 		]
 	]

@@ -4,11 +4,11 @@
   "description": "HTML Tagged Template syntax for Virtual DOM. Extension of HTM with HTML support.",
   "main": "dist/xhtm.js",
   "umd:main": "dist/xhtm.umd.js",
-  "module": "dist/xhtm.module.js",
+  "module": "dist/xhtm.module.mjs",
+  "source": "src/index.js",
   "scripts": {
     "start": "parcel serve --no-hmr test/index.html",
-    "build": "npm run -s build:main && npm run -s build:mini",
-    "build:main": "microbundle src/index.js -f es,umd --no-sourcemap --target web",
+    "build": "microbundle build --no-sourcemap --target web",
     "test": "node -r esm test/index.test.js",
     "test:perf": "v8 test/__perftest.js",
     "release": "npm t && git commit -am \"$npm_package_version\" && git tag $npm_package_version && git push && git push --tags && npm publish"

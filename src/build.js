@@ -1,30 +1,26 @@
-export default function ({ raw: str }, ...fields) {
+export default function ({ raw: str }) {
 	const h = this
 	const nameTpl = this.name || String.raw
 
+	let stack = [], i = 0, j = 0, curr = str[0]
+
 	// flatten input
-	let stack = [], j = 0, i = 0, curr
-	for (j; j < str.length; j++) {
-		stack.push(...str[j].split(''), j)
-	}
+	while (j < str.length) stack.push(...str[j].split(''), ++j)
 	stack.pop()
 
 	return text([])
 
-
-	function next(c) {
-		if (c) while (i < stack.length && (c.test ? !c.test(curr) : curr !== c)) {
+	function next(c=stack[i+1]) {
+		while (curr != null && (c.test ? (!c.test(curr)) : (curr !== c))) {
 			curr = stack[++i]
 		}
-		else curr = stack[++i]
-
-		// if (curr == null) throw Error('Invalid HTML')
-
 		return next
 	}
 
 	function text (nodes) {
+		let from = i
 		next('<')
+		nodes.push(...stack.slice(from, i).map(item => item.trim ? item : arguments[item]))
 
 		if (i >= stack.length) return nodes
 
@@ -44,7 +40,6 @@ export default function ({ raw: str }, ...fields) {
 		next('>')()
 
 		nodes.push(h(tagName, tagProps, ...children))
-
 		return text(nodes)
 	}
 
@@ -59,18 +54,18 @@ export default function ({ raw: str }, ...fields) {
 			next(/[\s=/>]/)
 		}
 
-		let nameStatics = [], nameFields = []
-		stack.slice(from, i).map(char => {
-			char.trim ? nameStatics.push(char) : nameFields.push(fields[char])
+		let args = [[]]
+		stack.slice(from, i).map(item => {
+			item.trim ? args[0].push(item) : args.push(arguments[item])
 		})
-		nameStatics.raw = nameStatics
-		return nameTpl(nameStatics, ...nameFields)
+		args[0].raw = args[0]
+		return nameTpl(...args)
 	}
 
 	function props (currProps) {
 		next(/[^\s/>]/)
 
-		if (curr == null || curr === '>' || (curr === '/' && stack[i+1] === '>')) return currProps
+		if (curr == null || curr === '>' || stack.slice(i, i + 2) === '/>') return currProps
 
 		if (!currProps) currProps = {}
 
@@ -84,11 +79,7 @@ export default function ({ raw: str }, ...fields) {
 			}
 		}
 		let propName = name()
-		currProps[propName] = true
-		if (curr === '=') {
-			next()
-			currProps[propName] = name()
-		}
+		currProps[propName] = curr === '=' ? (next(), name()) : true
 
 		return props(currProps)
 	}
