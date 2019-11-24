@@ -1,28 +1,43 @@
-export default function ({ raw: str }) {
+export default function ({ raw: statics }) {
 	const h = this
 	const nameTpl = this.name || String.raw
 
-	let stack = [], i = 0, j = 0, curr = str[0]
+	let i = -1, j = 0, chunk = statics[0], curr = chunk[0]
+	// i, j and curr point to the same char/field position
+	// chunk points to static part or field
 
-	// flatten input
-	while (j < str.length) stack.push(...str[j].split(''), ++j)
-	stack.pop()
+	return text([[]])
 
-	return text([])
-
-	function next(c=stack[i+1]) {
-		while (curr != null && (c.test ? (!c.test(curr)) : (curr !== c))) {
-			curr = stack[++i]
+	function next(c, strings=[], fields=[]) {
+		if (c && (c.test ? !c.test(curr) : curr !== c)) {
+			strings.push(chunk.slice(0, j))
+			chunk = chunk.slice(j)
+			j = 0
+			return next
 		}
-		return next
+
+		if (j < 0) {
+			i++
+			if (i) fields.push(arguments[curr])
+			chunk = statics[i]
+			if (chunk == null) return next
+		}
+
+		curr = chunk[++j]
+
+		if (curr == null) {
+			j = -1
+			strings.push(chunk)
+			curr = chunk = i
+		}
+
+		return next(c, strings, fields)
 	}
 
 	function text (nodes) {
-		let from = i
-		next('<')
-		nodes.push(...stack.slice(from, i).map(item => item.trim ? item : arguments[item]))
+		next('<', nodes, nodes)
 
-		if (i >= stack.length) return nodes
+		if (curr == null) return nodes
 
 		next() // <
 		if (curr === '/') return nodes
@@ -44,36 +59,30 @@ export default function ({ raw: str }) {
 	}
 
 	function name (quotes) {
-		let from = i
-		let quote
+		let quote, statics = [], fields = []
 		if (quotes && (curr === '"' || curr === "'")) {
 			quote = curr
-			next()(quote)()
+			next()(quote, statics, fields)()
 		}
 		else {
-			next(/[\s=/>]/)
+			next(/[\s=/>]/, statics, fields)
 		}
 
-		let args = [[]]
-		stack.slice(from, i).map(item => {
-			item.trim ? args[0].push(item) : args.push(arguments[item])
-		})
-		args[0].raw = args[0]
-		return nameTpl(...args)
+		fields.unshift(statics.raw = statics)
+		return nameTpl(...fields)
 	}
 
 	function props (currProps) {
 		next(/[^\s/>]/)
 
-		if (curr == null || curr === '>' || stack.slice(i, i + 2) === '/>') return currProps
+		if (curr == null || curr === '>' || (curr === '/' && chunk[1] === '>')) return currProps
 
 		if (!currProps) currProps = {}
 
 		// ...${}
 		if (curr === '.') {
-			let from = i
-			next()()()()
-			if (stack.slice(from, i - 1) === '...') {
+			if (chunk.slice(0, 3) === '...') {
+				next()()()
 				Object.assign(currProps, curr)
 				return props(currProps)
 			}
