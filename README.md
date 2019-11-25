@@ -60,13 +60,14 @@ For the rest, refer to [htm docs](https://ghub.io/htm).
 
 ## Comparison
 
-|                   | xhtm | htm | domtagger | nanohtml | hyperx | lit-html | common-tags |
-|---|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
-| Size              |      |     |           |          |        |          |             |
-| Performance       |      |     |           |          |        |          |             |
-| HTML Support      |      |     |           |          |        |          |             |
-| JSX Support       |      |     |           |          |        |          |             |
-| Output Format     |      |     |           |          |        |          |             |
-| Static Compiler   |      |     |           |          |        |          |             |
+|                             | htm       | xhtm     | domtagger | hyperx  | common-tags |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Size                        | 672b      | 591b     | 1186b    | 1949b    | 1242b       |
+| Performance: creation       | 88,111/s  | 27,091/s | 7,604/s  | 58,961/s | 172,692/s   |
+| Performance: usage          | 617,870/s | 27,032/s | 16,577/s | 60,888/s | 22,344/s    |
+| HTML Support                | -         |          |          |          |             |
+| JSX Support                 | +         |          |          |          |             |
+| Output Format               | h         |          |          |          |             |
+| Static Compiler             | +         |          |          |          |             |
 
 <p align="right">HK</p>
