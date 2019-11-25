@@ -10,8 +10,7 @@
     "start": "parcel serve --no-hmr test/index.html",
     "build": "microbundle build --no-sourcemap -f modern --target web",
     "test": "node -r esm test/index.test.js",
-    "test:perf": "v8 test/__perftest.js",
-    "release": "npm t && git commit -am \"$npm_package_version\" && git tag $npm_package_version && git push && git push --tags && npm publish"
+    "test:perf": "v8 test/__perftest.js"
   },
   "files": [
     "dist",

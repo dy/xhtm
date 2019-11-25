@@ -31,6 +31,11 @@ export default function (statics) {
 		next('<', nodes, nodes)()
 		if (chunk == null || curr === '/') return nodes.filter(v => v || v === 0)
 
+		if (/^!--/.test(chunk)) {
+			next()()()(/-->/)()()()
+			return text(nodes)
+		}
+
 		// tag
 		let tagName = name(false)
 		let tagProps = props()
