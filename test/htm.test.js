@@ -96,7 +96,7 @@ t('two props with dynamic values', (t) => {
   t.end()
 });
 
-t('prop with multiple static and dynamic values get concatenated as strings', (t) => {
+t.only('prop with multiple static and dynamic values get concatenated as strings', (t) => {
   t.deepEqual(html`<a href="before${'foo'}after" />`, { tag: 'a', props: { href: 'beforefooafter' }, children: [] });
   t.deepEqual(html`<a href=${1}${1} />`, { tag: 'a', props: { href: '11' }, children: [] });
   t.deepEqual(html`<a href=${1}between${1} />`, { tag: 'a', props: { href: '1between1' }, children: [] });
@@ -105,7 +105,7 @@ t('prop with multiple static and dynamic values get concatenated as strings', (t
   t.end()
 });
 
-t.only('spread props', (t) => {
+t('spread props', (t) => {
   t.deepEqual(html`<a ...${{ foo: 'bar' }} />`, { tag: 'a', props: { foo: 'bar' }, children: [] });
   t.deepEqual(html`<a b ...${{ foo: 'bar' }} />`, { tag: 'a', props: { b: true, foo: 'bar' }, children: [] });
   t.deepEqual(html`<a b c ...${{ foo: 'bar' }} />`, { tag: 'a', props: { b: true, c: true, foo: 'bar' }, children: [] });
