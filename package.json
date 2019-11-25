@@ -8,7 +8,7 @@
   "source": "src/index.js",
   "scripts": {
     "start": "parcel serve --no-hmr test/index.html",
-    "build": "microbundle build --no-sourcemap --target web",
+    "build": "microbundle build --no-sourcemap -f modern --target web",
     "test": "node -r esm test/index.test.js",
     "test:perf": "v8 test/__perftest.js",
     "release": "npm t && git commit -am \"$npm_package_version\" && git tag $npm_package_version && git push && git push --tags && npm publish"
@@ -36,7 +36,7 @@
     "@babel/preset-env": "^7.7.4",
     "@babel/preset-modules": "^0.1.1",
     "esm": "^3.2.25",
-    "microbundle": "^0.11.0",
+    "microbundle": "^0.12.0-next.6",
     "tape": "^4.11.0"
   }
 }

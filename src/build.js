@@ -1,43 +1,30 @@
-export default function ({ raw: statics }) {
+export default function ({ raw: statics }, ...fields) {
 	const h = this
-	const nameTpl = this.name || String.raw
+	const nameTpl = this.nameTpl || String.raw
 
-	let i = -1, j = 0, chunk = statics[0], curr = chunk[0]
-	// i, j and curr point to the same char/field position
-	// chunk points to static part or field
+	let chunk = statics[0], curr = chunk[0], i = 0
 
-	return text([[]])
+	const next = (c, a=[], b=[]) => {
+		if (chunk == null) return next
 
-	function next(c, strings=[], fields=[]) {
-		if (c && (c.test ? !c.test(curr) : curr !== c)) {
-			strings.push(chunk.slice(0, j))
-			chunk = chunk.slice(j)
-			j = 0
+		let idx = !c ? 1 : chunk.search(c)
+
+		if (idx >= 0) {
+			a.push(chunk.slice(0, idx))
+			chunk = chunk.slice(idx)
+			curr = chunk[0]
 			return next
 		}
 
-		if (j < 0) {
-			i++
-			if (i) fields.push(arguments[curr])
-			chunk = statics[i]
-			if (chunk == null) return next
-		}
-
-		curr = chunk[++j]
-
-		if (curr == null) {
-			j = -1
-			strings.push(chunk)
-			curr = chunk = i
-		}
-
-		return next(c, strings, fields)
+		if (i === fields.length) return
+		a.push(chunk)
+		b.push(fields[i++])
+		chunk = statics[i]
+		return next(c, a, b)
 	}
 
-	function text (nodes) {
-		next('<', nodes, nodes)
-
-		if (curr == null) return nodes
+	const text = (nodes) => {
+		if (!next('<', nodes, nodes)) return nodes
 
 		next() // <
 		if (curr === '/') return nodes
@@ -53,15 +40,14 @@ export default function ({ raw: statics }) {
 			text(children)
 		}
 		next('>')()
-
 		nodes.push(h(tagName, tagProps, ...children))
+
 		return text(nodes)
 	}
 
-	function name (quotes) {
-		let quote, statics = [], fields = []
-		if (quotes && (curr === '"' || curr === "'")) {
-			quote = curr
+	const name = (quotes) => {
+		let quote = curr, statics = [], fields = []
+		if (quotes && (quote === '"' || quote === "'")) {
 			next()(quote, statics, fields)()
 		}
 		else {
@@ -72,24 +58,26 @@ export default function ({ raw: statics }) {
 		return nameTpl(...fields)
 	}
 
-	function props (currProps) {
-		next(/[^\s/>]/)
+	const props = (currProps) => {
+		next(/\S/)
 
-		if (curr == null || curr === '>' || (curr === '/' && chunk[1] === '>')) return currProps
+		if (curr === '>' || chunk.slice(0,2) === '/>') {
+			return currProps
+		}
 
 		if (!currProps) currProps = {}
 
 		// ...${}
-		if (curr === '.') {
-			if (chunk.slice(0, 3) === '...') {
-				next()()()
-				Object.assign(currProps, curr)
-				return props(currProps)
-			}
+		if (chunk.slice(0, 3) === '...') {
+			next()()()
+			Object.assign(currProps, curr)
+			return props(currProps)
 		}
 		let propName = name()
 		currProps[propName] = curr === '=' ? (next(), name()) : true
 
 		return props(currProps)
 	}
+
+	return text([])
 }
