@@ -105,6 +105,20 @@ t('String.raw', async t => {
   t.end()
 })
 
+t.skip('html-template-string', async t => {
+  const { default: html} = await import('html-template-string')
+  html`
+<div>
+  <span><strong>Click me!</strong></span>
+  <span>Element2</span>
+  <span>Element3</span>
+<div>`
+  creation(html, t)
+  usage(html, t)
+
+  t.end()
+})
+
 
 function creation (html, t) {
   const results = [];

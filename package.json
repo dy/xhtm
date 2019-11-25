@@ -41,6 +41,7 @@
     "domtagger": "^0.5.11",
     "esm": "^3.2.25",
     "htm": "^2.2.1",
+    "html-template-string": "^1.2.6",
     "hyperx": "^2.5.4",
     "lit-html": "^1.1.2",
     "microbundle": "^0.12.0-next.6",
