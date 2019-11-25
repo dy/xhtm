@@ -1,96 +1,167 @@
-export default function (statics) {
-	const h = this
-	const nameTpl = this.nameTpl || ((s, ...f) => {
-		if (!s[0] && f.length === 1 && !s[1]) return f[0]
-		return String.raw(s, ...f)
-	})
+const MODE_SLASH = 0;
+const MODE_TEXT = 1;
+const MODE_WHITESPACE = 2;
+const MODE_TAGNAME = 3;
+const MODE_COMMENT = 4;
+const MODE_PROP_SET = 5;
+const MODE_PROP_APPEND = 6;
 
-	let chunk = statics[0], curr = chunk[0], i = 0
+const TAG_SET = 1;
+const CHILD_APPEND = 0;
+const CHILD_RECURSE = 2;
+const PROPS_ASSIGN = 3;
+const PROP_SET = MODE_PROP_SET;
+const PROP_APPEND = MODE_PROP_APPEND;
 
-	let next = (c, a=[], b=[]) => {
-		let idx = !c ? 1 : chunk.search(c)
+export const evaluate = (h, built, fields, args) => {
+	for (let i = 1; i < built.length; i++) {
+		const field = built[i];
+		const value = typeof field === 'number' ? fields[field] : field;
+		const type = built[++i];
 
-		if (idx >= 0) {
-			a.push(chunk.slice(0, idx))
-			chunk = chunk.slice(idx)
-			curr = chunk[0]
-			return next
+		if (type === TAG_SET) {
+			args[0] = value;
 		}
-
-		a.push(chunk)
-		chunk = statics[++i]
-
-		// end
-		if (chunk == null) return next = () => next
-
-		b.push(arguments[i])
-		return next(c, a, b)
-	}
-
-	const text = (nodes) => {
-		next('<', nodes, nodes)()
-		if (chunk == null || curr === '/') return nodes.filter(v => v || v === 0)
-
-		if (/^!--/.test(chunk)) {
-		// if (curr === '!' && chunk[1] === '!' && chunk[2] === '-' && chunk[3] === '-') {
-			next()()()('-->')()()()
-			return text(nodes)
+		else if (type === PROPS_ASSIGN) {
+			args[1] = Object.assign(args[1] || {}, value);
 		}
-
-		// tag
-		let tagName = name(false)
-		let tagProps = props()
-		let children = []
-
-		// non self-closing tag
-		if (curr === '>') {
-			next()
-			children = text(children)
+		else if (type === PROP_SET) {
+			(args[1] = args[1] || {})[built[++i]] = value;
 		}
-		nodes.push(h(tagName, tagProps, ...children))
-
-		next('>')()
-
-		return text(nodes)
-	}
-
-	const name = (quotes=true) => {
-		let quote = curr, statics = [], fields = []
-		if (quotes && (quote === '"' || quote === "'")) {
-			next()(quote, statics, fields)()
+		else if (type === PROP_APPEND) {
+			args[1][built[++i]] += (value + '');
+		}
+		else if (type) {
+			// code === CHILD_RECURSE
+			args.push(h.apply(null, evaluate(h, value, fields, ['', null])));
 		}
 		else {
-			next(/\s|=|>|\/>/, statics, fields)
+			// code === CHILD_APPEND
+			args.push(value);
 		}
-
-		fields.unshift(statics.raw = statics)
-		return nameTpl(...fields)
 	}
 
-	const props = (currProps=null) => {
-		next(/\S/)
+	return args;
+};
 
-		if (/^\/?>/.test(chunk)) {
-		// if ((chunk[0] === '/' && chunk[1] === '>') || curr === '>') {
-			return currProps
+export const build = function (statics) {
+	const fields = arguments;
+	const h = this;
+
+	let mode = MODE_TEXT;
+	let buffer = '';
+	let quote = '';
+	let current = [0];
+	let char, propName;
+
+	const commit = field => {
+		if (mode === MODE_TEXT && (field || (buffer = buffer.replace(/^\s*\n\s*|\s*\n\s*$/g, '')))) {
+			current.push(field || buffer, CHILD_APPEND);
+		}
+		else if (mode === MODE_TAGNAME && (field || buffer)) {
+			current.push(field || buffer, TAG_SET);
+			mode = MODE_WHITESPACE;
+		}
+		else if (mode === MODE_WHITESPACE && buffer === '...' && field) {
+			current.push(field, PROPS_ASSIGN);
+		}
+		else if (mode === MODE_WHITESPACE && buffer && !field) {
+			current.push(true, PROP_SET, buffer);
+		}
+		else if (mode >= MODE_PROP_SET) {
+			if (buffer || (!field && mode === MODE_PROP_SET)) {
+				current.push(buffer, mode, propName);
+				mode = MODE_PROP_APPEND;
+			}
+			if (field) {
+				current.push(field, mode, propName);
+				mode = MODE_PROP_APPEND;
+			}
 		}
 
-		if (!currProps) currProps = {}
+		buffer = '';
+	};
 
-		// ...${}
-		if (/^\.\.\./.test(chunk)) {
-		// if (chunk[0] === '.' && chunk[1] === '.' && chunk[2] === '.') {
-			let field = []
-			next(/\s|>|\//, [], field)
-			Object.assign(currProps, field[0])
-			return props(currProps)
+	for (let i = 0; i < statics.length; i++) {
+		if (i) {
+			if (mode === MODE_TEXT) {
+				commit();
+			}
+			commit(i);
 		}
-		let propName = name()
-		currProps[propName] = curr === '=' ? (next(), name()) : true
 
-		return props(currProps)
+		for (let j = 0; j < statics[i].length; j++) {
+			char = statics[i][j];
+
+			if (mode === MODE_TEXT) {
+				if (char === '<') {
+					// commit buffer
+					commit();
+					current = [current];
+					mode = MODE_TAGNAME;
+				}
+				else {
+					buffer += char;
+				}
+			}
+			else if (mode === MODE_COMMENT) {
+				// Ignore everything until the last three characters are '-', '-' and '>'
+				if (buffer === '--' && char === '>') {
+					mode = MODE_TEXT;
+					buffer = '';
+				}
+				else {
+					buffer = char + buffer[0];
+				}
+			}
+			else if (quote) {
+				if (char === quote) {
+					quote = '';
+				}
+				else {
+					buffer += char;
+				}
+			}
+			else if (char === '"' || char === "'") {
+				quote = char;
+			}
+			else if (char === '>') {
+				commit();
+				mode = MODE_TEXT;
+			}
+			else if (!mode) {
+				// Ignore everything until the tag ends
+			}
+			else if (char === '=') {
+				mode = MODE_PROP_SET;
+				propName = buffer;
+				buffer = '';
+			}
+			else if (char === '/' && (mode < MODE_PROP_SET || statics[i][j + 1] === '>')) {
+				commit();
+				if (mode === MODE_TAGNAME) {
+					current = current[0];
+				}
+				mode = current;
+				(current = current[0]).push(mode, CHILD_RECURSE);
+				mode = MODE_SLASH;
+			}
+			else if (/\s/.test(char)) {
+				// <a disabled>
+				commit();
+				mode = MODE_WHITESPACE;
+			}
+			else {
+				buffer += char;
+			}
+
+			if (mode === MODE_TAGNAME && buffer === '!--') {
+				mode = MODE_COMMENT;
+				current = current[0];
+			}
+		}
 	}
+	commit();
 
-	let nodes = text([])
-	return nodes.length > 1 ? nodes : nodes[0]
-}
+	return current;
+};
