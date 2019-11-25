@@ -1,17 +1,13 @@
-export default function ({ raw: statics }) {
+export default function (statics) {
 	const h = this
-	const nameTpl = this.nameTpl || String.raw
+	const nameTpl = this.nameTpl || ((s, ...f) => {
+		if (!s[0] && f.length === 1 && !s[1]) return f[0]
+		return String.raw(s, ...f)
+	})
 
 	let chunk = statics[0], curr = chunk[0], i = 0
 
 	let next = (c, a=[], b=[]) => {
-		// FIXME: this part is end indicator
-		// if (i >= fields.length) {
-		// 	a.push(chunk)
-		// 	chunk = null
-		// 	return next
-		// }
-
 		let idx = !c ? 1 : chunk.search(c)
 
 		if (idx >= 0) {
@@ -33,17 +29,17 @@ export default function ({ raw: statics }) {
 
 	const text = (nodes) => {
 		next('<', nodes, nodes)()
-		if (chunk == null || curr === '/') return nodes
+		if (chunk == null || curr === '/') return nodes.filter(v => v || v === 0)
 
 		// tag
-		const tagName = name(false)
-		const tagProps = props()
-		const children = []
+		let tagName = name(false)
+		let tagProps = props()
+		let children = []
 
 		// non self-closing tag
 		if (curr === '>') {
 			next() // >
-			text(children)
+			children = text(children)
 		}
 		nodes.push(h(tagName, tagProps, ...children))
 
@@ -52,20 +48,20 @@ export default function ({ raw: statics }) {
 		return text(nodes)
 	}
 
-	const name = (quotes) => {
+	const name = (quotes=true) => {
 		let quote = curr, statics = [], fields = []
 		if (quotes && (quote === '"' || quote === "'")) {
 			next()(quote, statics, fields)()
 		}
 		else {
-			next(/[\s=/>]/, statics, fields)
+			next(/\s|=|>|\/>/, statics, fields)
 		}
 
 		fields.unshift(statics.raw = statics)
 		return nameTpl(...fields)
 	}
 
-	const props = (currProps) => {
+	const props = (currProps=null) => {
 		next(/\S/)
 
 		if (curr === '>' || chunk.slice(0,2) === '/>') {
@@ -76,8 +72,9 @@ export default function ({ raw: statics }) {
 
 		// ...${}
 		if (chunk.slice(0, 3) === '...') {
-			next()()()
-			Object.assign(currProps, curr)
+			let field = []
+			next(/\s|>|\//, [], field)
+			Object.assign(currProps, field[0])
 			return props(currProps)
 		}
 		let propName = name()
@@ -86,5 +83,6 @@ export default function ({ raw: statics }) {
 		return props(currProps)
 	}
 
-	return text([])
+	let nodes = text([])
+	return nodes.length > 1 ? nodes : nodes[0]
 }

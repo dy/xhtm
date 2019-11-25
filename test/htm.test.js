@@ -78,8 +78,10 @@ t('single prop with dynamic value', (t) => {
 });
 
 t('slash in the middle of tag name or property name self-closes the element', (t) => {
-  t.deepEqual(html`<ab/ba prop=value>`, { tag: 'ab', props: null, children: [] });
-  t.deepEqual(html`<abba pr/op=value>`, { tag: 'abba', props: { pr: true }, children: [] });
+  // t.deepEqual(html`<ab/ba prop=value>`, { tag: 'ab', props: null, children: [] });
+  // t.deepEqual(html`<abba pr/op=value>`, { tag: 'abba', props: { pr: true }, children: [] });
+  t.deepEqual(html`<ab/ba prop=value>`, { tag: 'ab/ba', props: { prop: 'value' }, children: [] });
+  t.deepEqual(html`<abba pr/op=value>`, { tag: 'abba', props: { 'pr/op': 'value' }, children: [] });
   t.end()
 });
 
@@ -96,7 +98,7 @@ t('two props with dynamic values', (t) => {
   t.end()
 });
 
-t.only('prop with multiple static and dynamic values get concatenated as strings', (t) => {
+t('prop with multiple static and dynamic values get concatenated as strings', (t) => {
   t.deepEqual(html`<a href="before${'foo'}after" />`, { tag: 'a', props: { href: 'beforefooafter' }, children: [] });
   t.deepEqual(html`<a href=${1}${1} />`, { tag: 'a', props: { href: '11' }, children: [] });
   t.deepEqual(html`<a href=${1}between${1} />`, { tag: 'a', props: { href: '1between1' }, children: [] });
@@ -165,7 +167,9 @@ t('dynamic child', (t) => {
 t('mixed text + dynamic children', (t) => {
   t.deepEqual(html`<a>${'foo'}bar</a>`, { tag: 'a', props: null, children: ['foo', 'bar'] });
   t.deepEqual(html`<a>before${'foo'}after</a>`, { tag: 'a', props: null, children: ['before', 'foo', 'after'] });
-  t.deepEqual(html`<a>foo${null}</a>`, { tag: 'a', props: null, children: ['foo', null] });
+  // t.deepEqual(html`<a>foo${null}</a>`, { tag: 'a', props: null, children: ['foo', null] });
+  t.deepEqual(html`<a>foo${null}</a>`, { tag: 'a', props: null, children: ['foo'] });
+  t.deepEqual(html`<a>foo${0}</a>`, { tag: 'a', props: null, children: ['foo', 0] });
   t.end()
 });
 

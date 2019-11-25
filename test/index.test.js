@@ -17,7 +17,7 @@ t('plain text', t => {
 	t.deepEqual(html`a${1}b${2}c`, ['a', 1, 'b', 2, 'c'])
 	t.deepEqual(html`foo${''}bar${''}`, ['foo', 'bar'])
 	t.deepEqual(html`${'foo'}${'bar'}`, ['foo', 'bar'])
-	t.deepEqual(html`${''}${''}`, ['', ''])
+	t.deepEqual(html`${''}${''}`, undefined)
 	t.end()
 })
 
