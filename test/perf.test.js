@@ -1,7 +1,4 @@
 import htm from '../src/index.js';
-// import htm from '../dist/xhtm.modern.js';
-// import htm from 'htm/mini';
-// import htm from 'htm';
 import t from 'tape'
 
 const h = (tag, props, ...children) => ({ tag, props, children });
@@ -39,7 +36,7 @@ t.skip('creation', (t) => {
 	t.end()
 });
 
-t.only('usage', (t) => {
+t.skip('usage', (t) => {
 	const results = [];
 	const Foo = ({ name }) => html`<div class="foo">${name}</div>`;
 	let count = 0;

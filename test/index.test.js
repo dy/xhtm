@@ -12,7 +12,7 @@ t('base case', t => {
 	t.end()
 })
 
-t('plain text', t => {
+t.skip('plain text', t => {
 	t.deepEqual(html`a`, `a`)
 	t.deepEqual(html`a${'b'}c`, ['a', 'b', 'c'])
 	t.deepEqual(html`a${1}b${2}c`, ['a', 1, 'b', 2, 'c'])
@@ -40,30 +40,28 @@ t('simple attributes', t => {
 	t.end()
 })
 
-t('malformed html', t => {
+t.skip('malformed html', t => {
 	t.throws(() => html`<a b c`)
 	t.throws(() => html`<a><`)
 	t.end()
 })
 
-t.skip('attribute tpl', t => {
-	t.deepEqual(attribute`a${'b'}c=1${2}3`, ['abc', '123'])
-	t.deepEqual(attribute`${'foo'}=${'bar'}`, ['foo', 'bar'])
-	t.deepEqual(attribute`${1}=${2}`, [1, 2])
-	t.deepEqual(attribute`${''}${1}${''}=${''}${2}${''}`, ['1', '2'])
-	t.deepEqual(attribute`${{}}=${{}}`, [{}, {}])
-	t.deepEqual(attribute`${{}}`, [{}])
+t.skip('dynamic attributes', t => {
+	t.deepEqual(html`< a${'b'}c=1${2}3 />`, {tag: '', props: {'abc': '123'}, children: []})
+	// t.deepEqual(html`${'foo'}=${'bar'}`, ['foo', 'bar'])
+	// t.deepEqual(html`${1}=${2}`, [1, 2])
+	// t.deepEqual(html`${''}${1}${''}=${''}${2}${''}`, ['1', '2'])
+	// t.deepEqual(html`${{}}=${{}}`, [{}, {}])
+	// t.deepEqual(html`${{}}`, [{}])
 	t.end()
 })
 
-t.skip('attributes tpl', t => {
-	t.deepEqual(attributes`a${'b'}c=1${2}3`, ['abc', '123'])
-	t.deepEqual(attributes`${'foo'}=${'bar'}`, ['foo', 'bar'])
-	t.deepEqual(attributes`${1}=${2}`, [1, 2])
-	t.deepEqual(attributes`${''}${1}${''}=${''}${2}${''}`, ['1', '2'])
-	t.deepEqual(attributes`${{}}=${{}}`, [{}, {}])
-	t.deepEqual(attributes`${{}}`, [{}])
-	t.end()
+t.skip('directives', t => {
+	// t.deepEqual(html`<?xml version="1.0" encoding="UTF-8" ?>`, undefined)
+	// t.deepEqual(html`<!doctype html>`, undefined)
+	// t.deepEqual(html`<![CDATA[ ...  ]]>`, undefined)
+	// t.deepEqual(html`<!-- comment -->`, undefined)
+	// t.deepEqual(html`<!--[if expression]> HTML <![endif]-->`, undefined)
 })
 
 t.skip('ignore false value', t => {

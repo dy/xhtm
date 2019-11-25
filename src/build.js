@@ -31,12 +31,10 @@ export const evaluate = (h, built, fields, args) => {
 		else if (type === PROP_APPEND) {
 			args[1][built[++i]] += (value + '');
 		}
-		else if (type) {
-			// code === CHILD_RECURSE
+		else if (type === CHILD_RECURSE) {
 			args.push(h.apply(null, evaluate(h, value, fields, ['', null])));
 		}
-		else {
-			// code === CHILD_APPEND
+		else if (type === CHILD_APPEND) {
 			args.push(value);
 		}
 	}
@@ -45,9 +43,6 @@ export const evaluate = (h, built, fields, args) => {
 };
 
 export const build = function (statics) {
-	const fields = arguments;
-	const h = this;
-
 	let mode = MODE_TEXT;
 	let buffer = '';
 	let quote = '';
@@ -129,7 +124,7 @@ export const build = function (statics) {
 				commit();
 				mode = MODE_TEXT;
 			}
-			else if (!mode) {
+			else if (mode === MODE_SLASH) {
 				// Ignore everything until the tag ends
 			}
 			else if (char === '=') {
