@@ -32,7 +32,8 @@ export default function (statics) {
 		if (chunk == null || curr === '/') return nodes.filter(v => v || v === 0)
 
 		if (/^!--/.test(chunk)) {
-			next()()()(/-->/)()()()
+		// if (curr === '!' && chunk[1] === '!' && chunk[2] === '-' && chunk[3] === '-') {
+			next()()()('-->')()()()
 			return text(nodes)
 		}
 
@@ -43,7 +44,7 @@ export default function (statics) {
 
 		// non self-closing tag
 		if (curr === '>') {
-			next() // >
+			next()
 			children = text(children)
 		}
 		nodes.push(h(tagName, tagProps, ...children))
@@ -69,14 +70,16 @@ export default function (statics) {
 	const props = (currProps=null) => {
 		next(/\S/)
 
-		if (curr === '>' || chunk.slice(0,2) === '/>') {
+		if (/^\/?>/.test(chunk)) {
+		// if ((chunk[0] === '/' && chunk[1] === '>') || curr === '>') {
 			return currProps
 		}
 
 		if (!currProps) currProps = {}
 
 		// ...${}
-		if (chunk.slice(0, 3) === '...') {
+		if (/^\.\.\./.test(chunk)) {
+		// if (chunk[0] === '.' && chunk[1] === '.' && chunk[2] === '.') {
 			let field = []
 			next(/\s|>|\//, [], field)
 			Object.assign(currProps, field[0])

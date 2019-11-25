@@ -1,4 +1,5 @@
 import './htm.test.js'
+import './perf.test.js'
 import t from 'tape'
 import htm from '../src/index.js'
 
