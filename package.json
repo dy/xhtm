@@ -8,9 +8,9 @@
   "source": "src/index.js",
   "scripts": {
     "start": "parcel serve --no-hmr test/index.html",
-    "build": "microbundle build --no-sourcemap -f modern --target web",
     "test": "node -r esm test/index.test.js",
-    "test:perf": "v8 test/__perftest.js"
+    "start:bench": "parcel serve --no-hmr test/bench.html",
+    "build": "microbundle build --no-sourcemap -f modern --target web"
   },
   "files": [
     "dist",
@@ -27,6 +27,9 @@
     "jsx",
     "virtual dom",
     "hyperscript"
+  ],
+  "browserslist": [
+    "last 1 Chrome versions"
   ],
   "author": "Dmitry Yv <df.creative@gmail.com>",
   "license": "MIT",
