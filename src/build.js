@@ -1,96 +1,22 @@
-export default function (statics) {
-	const h = this
-	const nameTpl = this.nameTpl || ((s, ...f) => {
-		if (!s[0] && f.length === 1 && !s[1]) return f[0]
-		return String.raw(s, ...f)
-	})
+// concept
+// - declarative matchers via .indexOf
+// - dispatching input chars to various outputs
 
-	let chunk = statics[0], curr = chunk[0], i = 0
 
-	let next = (c, a=[], b=[]) => {
-		let idx = !c ? 1 : chunk.search(c)
+const mode = text
+const buffer
 
-		if (idx >= 0) {
-			a.push(chunk.slice(0, idx))
-			chunk = chunk.slice(idx)
-			curr = chunk[0]
-			return next
-		}
-
-		a.push(chunk)
-		chunk = statics[++i]
-
-		// end
-		if (chunk == null) return next = () => next
-
-		b.push(arguments[i])
-		return next(c, a, b)
+while (!end) {
+	let idx = chunk.indexOf('<')
+	if (idx < 0) {
+		consume(chunk)
+		consume(i)
 	}
+	else if (idx > 0) {
+		consume(chunk.slice(0, idx))
+		chunk = chunk.slice(idx)
 
-	const text = (nodes) => {
-		next('<', nodes, nodes)()
-		if (chunk == null || curr === '/') return nodes.filter(v => v || v === 0)
+		let idx2 = chunk.indexOf('')
 
-		if (/^!--/.test(chunk)) {
-		// if (curr === '!' && chunk[1] === '!' && chunk[2] === '-' && chunk[3] === '-') {
-			next()()()('-->')()()()
-			return text(nodes)
-		}
-
-		// tag
-		let tagName = name(false)
-		let tagProps = props()
-		let children = []
-
-		// non self-closing tag
-		if (curr === '>') {
-			next()
-			children = text(children)
-		}
-		nodes.push(h(tagName, tagProps, ...children))
-
-		next('>')()
-
-		return text(nodes)
 	}
-
-	const name = (quotes=true) => {
-		let quote = curr, statics = [], fields = []
-		if (quotes && (quote === '"' || quote === "'")) {
-			next()(quote, statics, fields)()
-		}
-		else {
-			next(/\s|=|>|\/>/, statics, fields)
-		}
-
-		fields.unshift(statics.raw = statics)
-		return nameTpl(...fields)
-	}
-
-	const props = (currProps=null) => {
-		next(/\S/)
-
-		if (/^\/?>/.test(chunk)) {
-		// if ((chunk[0] === '/' && chunk[1] === '>') || curr === '>') {
-			return currProps
-		}
-
-		if (!currProps) currProps = {}
-
-		// ...${}
-		if (/^\.\.\./.test(chunk)) {
-		// if (chunk[0] === '.' && chunk[1] === '.' && chunk[2] === '.') {
-			let field = []
-			next(/\s|>|\//, [], field)
-			Object.assign(currProps, field[0])
-			return props(currProps)
-		}
-		let propName = name()
-		currProps[propName] = curr === '=' ? (next(), name()) : true
-
-		return props(currProps)
-	}
-
-	let nodes = text([])
-	return nodes.length > 1 ? nodes : nodes[0]
 }
