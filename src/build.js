@@ -60,17 +60,3 @@ export function build (str) {
 
 	return arr
 }
-
-// 5. evaluate
-export function evaluate (h, arr, fields) {
-	let fieldIdx = 1, fieldChar = String.fromCodePoint(UNICODE_OFFSET + fieldIdx)
-	for (let i = 0; i < arr.length; i++) {
-		let idx = arr[i].indexOf(fieldChar)
-		if (idx >= 0) {
-			arr[i] = arr[i].slice(0, idx) + fields[fieldIdx] + arr[i].slice(idx + 1)
-			fieldIdx++
-			fieldChar = String.fromCodePoint(UNICODE_OFFSET + fieldIdx)
-		}
-	}
-	return arr
-}
