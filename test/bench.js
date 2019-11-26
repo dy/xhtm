@@ -12,7 +12,7 @@ t('htm', async t => {
   t.end()
 })
 
-t('xhtm', async t => {
+t.only('xhtm', async t => {
   const htm = (await import('../src/index')).default
 
   const h = (tag, props, ...children) => ({ tag, props, children });
