@@ -7,7 +7,7 @@ import t from 'tape'
 const h = (tag, props, ...children) => ({ tag, props, children });
 const html = htm.bind(h);
 
-t.skip('creation', (t) => {
+t.only('creation', (t) => {
 	const results = [];
 	const Foo = ({ name }) => html`<div class="foo">${name}</div>`;
 	let count = 0;

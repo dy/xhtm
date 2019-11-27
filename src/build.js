@@ -31,8 +31,7 @@ export default function (statics) {
 		next('<', nodes, nodes)()
 		if (chunk == null || curr === '/') return nodes.filter(v => v || v === 0)
 
-		if (/^!--/.test(chunk)) {
-		// if (curr === '!' && chunk[1] === '!' && chunk[2] === '-' && chunk[3] === '-') {
+		if (chunk.slice(0, 3) === '!--') {
 			next()()()('-->')()()()
 			return text(nodes)
 		}
