@@ -1,57 +1,61 @@
-const find = (str, char, from = 0, to) => {
-	let idx = from ? str.slice(from, to).indexOf(char) : str.indexOf(char, to)
-	return idx < 0 ? idx : idx + from
-}
+// - no recursion
+// - direct arrays storing in cache
+// - indexof 2 vs regex
 
 export function build (str) {
-	let arr = [], stack = []
+	let curr = [], stack = [curr]
+
+	const find = (char, from = 0) => {
+		let idx = (from ? str.slice(from) : str).indexOf(char)
+		return idx < 0 ? idx : idx + from
+	}
 
 	while(str) {
-		let quoteIdx = [0, 1], quote, openTagIdx = [], closeTagIdx = []
-		openTagIdx[0] = find(str, '<')
-		if (openTagIdx[0] < 0) {
-			arr.push(str)
-			return null
+		let openTagIdx0, openTagIdx1, closeTagIdx0, closeTagIdx1
+		openTagIdx0 = find('<')
+		if (openTagIdx0 < 0) {
+			curr.push(str)
+			break
 		}
 
-		if (openTagIdx[0]) arr.push(str.slice(0, openTagIdx[0]))
+		if (openTagIdx0) curr.push(str.slice(0, openTagIdx0))
 
 		// closing prev tag
-		if (str[openTagIdx[0] + 1] === '/') {
-			return openTagIdx[0]
+		if (str[openTagIdx0 + 1] === '/') {
+			let parent = stack.pop()
+			parent.push(curr)
+			curr = parent
+			str = str.slice(find('>', openTagIdx0 + 1) + 1)
+			continue
 		}
 
-		openTagIdx[1] = find(str, '>', openTagIdx[0])
+		openTagIdx1 = find('>', openTagIdx0)
 
 		// parse quotes, push end tag outside of quotes
-		let end1 = 10
-		while (true) {
-			if (!end1--) throw 'Inner overflow'
-			let dQuoteIdx = find(str, '"', quoteIdx[1], openTagIdx[1])
-			let sQuoteIdx = find(str, "'", quoteIdx[1], openTagIdx[1])
+		let quote, quoteIdx0, quoteIdx1
+		let max = 10
+		while (max--) {
+			let origStr = str
+			str = origStr.slice(0, openTagIdx1)
+			let dQuoteIdx = find('"', (quoteIdx1 || openTagIdx0) + 1)
+			let sQuoteIdx = find("'", (quoteIdx1 || openTagIdx0) + 1)
+			quoteIdx0 = dQuoteIdx < 0 ? sQuoteIdx : dQuoteIdx
+			str = origStr
 
 			// no anymore quotes before the closing tag
-			quoteIdx[0] = dQuoteIdx < 0 ? sQuoteIdx : (sQuoteIdx < 0 ? dQuoteIdx : Math.min(sQuoteIdx, dQuoteIdx))
+			if (quoteIdx0 < 0) break
 
-			if (quoteIdx[0] < 0) break
+			quote = str[quoteIdx0]
+			quoteIdx1 = find(quote, quoteIdx0 + 1)
 
-			quote = str[quoteIdx[0]]
-			quoteIdx[1] = find(str, quote, quoteIdx[0] + 1)
-
-			if (quoteIdx[1] > openTagIdx[1]) {
+			if (quoteIdx1 > openTagIdx1) {
 				// push closing tag forward
-				openTagIdx[1] = find(str, '>', openTagIdx[1])
+				openTagIdx1 = find('>', openTagIdx1 + 1)
 			}
 		}
 
-		let openTagStr = str.slice(openTagIdx[0] + 1, openTagIdx[1])
+		let openTagStr = str.slice(openTagIdx0 + 1, openTagIdx1)
 		let idx, props = []
-
-		// self-closing tag
-		if (str[openTagIdx[1] - 1] === '/') {
-			arr.push(['someTag', props])
-			return parseNodes(str.slice(openTagIdx[1] + 1), arr)
-		}
 
 		// TODO: parse quotes/props properly here
 		// while ((idx = openTagStr.indexOf(' ')) >= 0) {
@@ -65,17 +69,16 @@ export function build (str) {
 		// 	}
 		// }
 
-		stack.push(arr)
-		arr = []
-
-		closeTagIdx[0] = parseNodes(str.slice(openTagIdx[1] + 1), children) + openTagIdx[1] + 1
-		closeTagIdx[1] = find(str, '>', closeTagIdx[0])
-
-		arr.push(['', props, ...children])
-
-		str = str.slice(closeTagIdx[1] + 1)
-		if (!str) return -1
+		// self-closing tag
+		if (str[openTagIdx1 - 1] === '/') {
+			curr.push(['someTag', props])
+		}
+		else {
+			stack.push(curr)
+			curr = ['someTag', props]
+		}
+		str = str.slice(openTagIdx1 + 1)
 	}
 
-	return arr
+	return curr
 }
