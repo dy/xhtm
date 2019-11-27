@@ -41,7 +41,7 @@ Because _htm_ is intended to be [JSX-compatible](https://github.com/developit/ht
 
 ## Installation & Usage
 
-`xhtm` is fully compatible with `htm` and can be used as drop-in replacement.
+`xhtm` is compatible with `htm` and can be used as drop-in replacement.
 
 [![NPM](https://nodei.co/npm/xhtm.png?mini=true)](https://nodei.co/npm/xhtm/)
 

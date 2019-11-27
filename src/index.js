@@ -2,35 +2,66 @@ import build from './build.js';
 
 export default build
 
-// import { MINI } from './constants.js';
+// import { build } from './build.js'
+// import { FIELD_PLACEHOLDER } from './constants.js'
 
-// const evaluate = (h, tpl, fields) => {
+// const CACHE = new Map
 
-// }
+// export default function (statics) {
+//   let tpl = CACHE.get(statics)
 
-// const getCacheMap = (statics) => {
-//   let tpl = CACHE.get(statics);
 //   if (!tpl) {
-//     CACHE.set(statics, tpl = build(statics));
+//     // 1. flatten
+//     let str = statics.join(FIELD_PLACEHOLDER)
+
+//     // 2. normalize
+//     // this is only ~20% slower than analogous slice/indexof implementation
+//     str = str.replace(/\s+/g, ' ')
+
+//     // 3. build
+//     tpl = build(str)
+
+//     // 4. cache
+//     CACHE.set(statics, tpl)
 //   }
-//   return tpl;
-// };
 
-// const getCacheKeyed = (statics) => {
-//   let key = '';
-//   for (let i = 0; i < statics.length; i++) {
-//     key += statics[i].length + '-' + statics[i];
-//   }
-//   return CACHE[key] || (CACHE[key] = build(statics));
-// };
-
-// const USE_MAP = !MINI && typeof Map === 'function';
-// const CACHE = USE_MAP ? new Map() : {};
-// const getCache = USE_MAP ? getCacheMap : getCacheKeyed;
-
-// const cached = function (statics) {
-//   const res = evaluate(this, getCache(statics), arguments, []);
+//   // 5. evaluate
+//   const res = evaluate(this, tpl, arguments);
 //   return res.length > 1 ? res : res[0];
 // };
 
-// export default MINI ? build : cached;
+
+// // 5. evaluate
+// function evaluate(h, tpl, fields, fieldIdx = 1) {
+//   let out = []
+//   if (!tpl.length) return out
+
+//   for (let i = 1; i < tpl.length; i++) {
+//     if (typeof tpl[i] === 'string') {
+//       out.push(...evalStr(tpl[i]))
+//     }
+//     else {
+//       let [tag, params, ...children] = tpl[i]
+//       let tagName = evalStr(tag).join('')
+//       let callProps = null
+//       params.map(part => {
+//         if (!callProps) callProps = {}
+//         let propName = evalStr(part[0]).join('')
+//         callProps[propName] = part[1] ? evalStr(part[1]).join('') : true
+//       })
+
+//       out.push(h(tagName, callProps, ...evaluate(h, children, fields)))
+//     }
+//   }
+
+//   function evalStr(str) {
+//     let out = []
+//     str.split(FIELD_PLACEHOLDER).map((chunk, i, total) => {
+//       out.push(chunk, total.length > 1 ? fields[fieldIdx++] : '')
+//     })
+//     out.pop()
+//     return out
+//   }
+
+//   return out
+// }

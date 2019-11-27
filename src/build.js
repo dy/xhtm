@@ -1,108 +1,97 @@
-// - simpler unicodes via split
-// -
+import { PLACEHOLDER } from './constants'
 
-export default function (statics) {
-	const h = this
-	const nameTpl = this.nameTpl || ((s, ...f) => {
-		if (!s[0] && f.length === 1 && !s[1]) return f[0]
-		return String.raw(s, ...f)
-	})
+export default function (statics, ...fields) {
+	let h = this
+	let str = statics.join(PLACEHOLDER)
 
-	let chunk = statics[0], curr = chunk[0], i = 0
+	let i = 0, current = [0], char, field = 0
 
-	let next = (c, a, b) => {
-		let idx
-
-		// fast replacement for chunk.search
-		if (c && c.length) {
-			idx = -1
-			for (let i = c.length; i--;) {
-				let possibleIdx = chunk.indexOf(c[i])
-				if (possibleIdx >= 0) {
-					if (idx < 0 || possibleIdx < idx) idx = possibleIdx
-				}
-			}
+	const next = c => {
+		// fast replacement for str.search
+		let idx = -1
+		for (let j = c.length; j--;) {
+			let possibleIdx = str.indexOf(c[j], i)
+			if (possibleIdx >= 0) if (idx < 0 || possibleIdx < idx) idx = possibleIdx
 		}
-		else idx = !c ? 1 : c
-
-		if (idx >= 0) {
-			if (a) a.push(idx ? chunk.slice(0, idx) : '')
-			if (idx) chunk = chunk.slice(idx)
-			curr = chunk[0]
-			return next
-		}
-
-		if (a) a.push(chunk)
-		chunk = statics[++i]
-
-		// end
-		if (chunk == null) return next = () => next
-
-		if (b) b.push(arguments[i])
-		return next(c, a, b)
+		return (char = str[idx]) && str.slice(i, i = idx)
 	}
 
-	const text = (nodes) => {
-		next('<', nodes, nodes)()
-		if (chunk == null || curr === '/') return nodes.filter(v => v || v === 0)
+	while (1) {
+		let text = next('<')
 
-		if (chunk.slice(0, 3) === '!--') {
-			next(3)(['-->'])(3)
-			return text(nodes)
+		// hard-break
+		if (!text) return current.length === 2 ? current[1] : current.slice(1)
+
+		current.push(...text.split(PLACEHOLDER))
+		char = str[++i]
+
+		if (char === '/') {
+			// close tag
+			let params = current.slice(1)
+			current = current[0]
+			current.push(h(...params))
+			next('>')
 		}
-
-		// tag
-		let tagName = name(false)
-		let tagProps = props()
-		let children = []
-
-		// non self-closing tag
-		if (curr === '>') {
-			next()
-			children = text(children)
-		}
-		nodes.push(h(tagName, tagProps, ...children))
-
-		next('>')()
-
-		return text(nodes)
-	}
-
-	const name = (quotes=true) => {
-		let quote = curr, statics = [], fields = []
-		if (quotes && (quote === '"' || quote === "'")) {
-			next()(quote, statics, fields)()
+		else if (str.substr(i, 3) === '!--') {
+			// comment
+			i+=3
+			next(['-->'])
+			i+=3
 		}
 		else {
-			// next(/\s|=|>|\/>/, statics, fields)
-			next([...' \n\r=>', '/>'], statics, fields)
-		}
+			// open tag
+			// mode === 0 - tag, mode === 1 - prop, mode === 2 - value
+			let tag = '', props, space = ' \t\r\n', end = '/>', quote = `'"`, mode = 0, prop = '', value = ''
 
-		fields.unshift(statics.raw = statics)
-		return nameTpl(...fields)
+			// while (char !== '>' && char !== '/') {
+			while (end.indexOf(char) < 0) {
+				// if (char !== ' ' && char !== '\t' && char !== '\r' && char !== '\n') {
+				if (space.indexOf(char) < 0) {
+					// tag
+					if (!mode) {
+						tag += char
+					}
+					// prop
+					else if (mode < 2) {
+						if (char === '=') {
+							mode=2
+						} else {
+							prop += char
+						}
+					}
+					// value
+					else {
+						if (quote.indexOf(char) < 0) {
+							value += char
+						}
+						else {
+							i++
+							value += next(char)
+						}
+					}
+				}
+				// space sep
+				else {
+					mode = 1
+					if (!props) props = {}
+					if (prop) {
+						props[prop] = value || true
+						prop = value = ''
+					}
+				}
+				char = str[++i]
+			}
+
+			// self-closing tag
+			if (char === '/') {
+				current.push(h(tag, props))
+				i+=2
+			}
+			// new tag
+			else {
+				i++
+				current = [current, tag, props]
+			}
+		}
 	}
-
-	const props = (currProps=null) => {
-		while (curr === ' ' || curr === '\n' || curr === '\r') next()
-		if (chunk.slice(0, 2) === '/>' || curr === '>') {
-			return currProps
-		}
-
-		if (!currProps) currProps = {}
-
-		// ...${}
-		if (chunk.slice(0, 3) === '...') {
-			let field = []
-			next(' >/', null, field)
-			Object.assign(currProps, field[0])
-			return props(currProps)
-		}
-		let propName = name()
-		currProps[propName] = curr === '=' ? (next(), name()) : true
-
-		return props(currProps)
-	}
-
-	let nodes = text([])
-	return nodes.length > 1 ? nodes : nodes[0]
 }
