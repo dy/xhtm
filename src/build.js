@@ -1,5 +1,5 @@
 // - direct arrays storing in cache
-// - indexof 2 vs regex
+import { FIELD_PLACEHOLDER } from './constants'
 
 export function build (str) {
 	let curr = [], stack = [curr]
@@ -14,27 +14,28 @@ export function build (str) {
 
 		if (openTagIdx0) curr.push(str.slice(0, openTagIdx0))
 
+		str = str.slice(openTagIdx0 + 1)
+		// ---✄--- openTagIdx === -1
+
+		openTagIdx1 = str.indexOf('>')
+
 		// closing prev tag
-		if (str[openTagIdx0 + 1] === '/') {
+		if (str[0] === '/') {
 			let parent = stack.pop()
 			parent.push(curr)
 			curr = parent
-			str = str.slice(str.indexOf('>', openTagIdx0 + 1) + 1)
+			str = str.slice(openTagIdx1 + 1)
 			continue
 		}
 
-		openTagIdx1 = str.indexOf('>', openTagIdx0)
 
 		// parse quotes, push end tag outside of quotes
-		let quote, quoteIdx0, quoteIdx1
-		let max = 10
+		let quote, quoteIdx0, quoteIdx1 = -1, max = 10, quotes = [], tagStr
 		while (max--) {
-			let origStr = str
-			str = origStr.slice(0, openTagIdx1)
-			let dQuoteIdx = str.indexOf('"', (quoteIdx1 || openTagIdx0) + 1)
-			let sQuoteIdx = str.indexOf("'", (quoteIdx1 || openTagIdx0) + 1)
+			tagStr = str.slice(0, openTagIdx1)
+			let dQuoteIdx = tagStr.indexOf('"', quoteIdx1 + 1)
+			let sQuoteIdx = tagStr.indexOf("'", quoteIdx1 + 1)
 			quoteIdx0 = dQuoteIdx < 0 ? sQuoteIdx : dQuoteIdx
-			str = origStr
 
 			// no anymore quotes before the closing tag
 			if (quoteIdx0 < 0) break
@@ -46,30 +47,33 @@ export function build (str) {
 				// push closing tag forward
 				openTagIdx1 = str.indexOf('>', openTagIdx1 + 1)
 			}
+
+			// remove quoted value to avoid params parsing clash
+			let len = quoteIdx1 - quoteIdx0 - 1
+			quotes.push(str.slice(quoteIdx0 + 1, quoteIdx1))
+			str = str.slice(0, quoteIdx0) + '""' + str.slice(quoteIdx1 + 1)
+			quoteIdx1 -= len
+			openTagIdx1 -= len
 		}
 
-		let openTagStr = str.slice(openTagIdx0 + 1, openTagIdx1)
-		let idx, props = []
+		// tagname/args
+		// FIXME: this can be slow
+		if (tagStr.slice(-1) === '/') tagStr = tagStr.slice(0, -1)
+		let params = tagStr.split(' ').filter(Boolean).map(part => {
+			if (part.slice(-2) === '""') part = part.slice(0, -2) + quotes.shift()
+			return part.split('=')
+		})
 
-		// TODO: parse quotes/props properly here
-		// while ((idx = openTagStr.indexOf(' ')) >= 0) {
-		// 	let name = openTagStr.slice(0, idx)
-		// 	openTagStr = openTagStr.slice(idx + 1)
-		// 	if (!tagName) {
-		// 		tagName = name
-		// 	}
-		// 	else {
-		// 		props.push(name)
-		// 	}
-		// }
+		const node = [params[0] ? params[0][0] : '', params.slice(1)]
 
 		// self-closing tag
 		if (str[openTagIdx1 - 1] === '/') {
-			curr.push(['someTag', props])
+			curr.push(node)
 		}
+		// new tag
 		else {
 			stack.push(curr)
-			curr = ['someTag', props]
+			curr = node
 		}
 		str = str.slice(openTagIdx1 + 1)
 	}

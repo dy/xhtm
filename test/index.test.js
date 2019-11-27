@@ -6,8 +6,38 @@ const html = htm.bind((tag, props, ...children) => {
 	return { tag, props, children }
 });
 
-t('base case', t => {
-	t.deepEqual(html`foo <a bar>baz${'qux'}</a>`, ['foo ', { tag: 'a', props: { bar: true }, children: ['baz', 'qux'] }])
+// t.only('base case', t => {
+// 	t.deepEqual(html`foo <a bar>baz${'qux'}</a>`, ['foo ', { tag: 'a', props: { bar: true }, children: ['baz', 'qux'] }])
+// 	t.end()
+// })
+
+t('tag cases', t => {
+	// special case: both self-closing empty tag and ending tag
+	// t.deepEqual(html`</>`, { tag: '', props: null, children: []})
+
+	t.deepEqual(html`< />`, { tag: '', props: null, children: []})
+	t.deepEqual(html`<></>`, { tag: '', props: null, children: [] })
+	t.deepEqual(html`<a></>`, { tag: 'a', props: null, children: [] })
+	t.deepEqual(html`<a></a>`, { tag: 'a', props: null, children: [] })
+	t.deepEqual(html`<abc/>`, { tag: 'abc', props: null, children: [] })
+	t.deepEqual(html`<abc />`, {tag: 'abc', props: null, children: []})
+	t.deepEqual(html`<abc  />`, {tag: 'abc', props: null, children: []})
+	t.deepEqual(html`<abc></>`, {tag: 'abc', props: null, children: []})
+	t.deepEqual(html`<abc></abc>`, { tag: 'abc', props: null, children: [] })
+	t.deepEqual(html`<${'abc'} />`, { tag: 'abc', props: null, children: [] })
+	t.deepEqual(html`<abc d/>`, { tag: 'abc', props: {d: true}, children: [] })
+	t.deepEqual(html`<abc d />`, { tag: 'abc', props: {d: true}, children: [] })
+	t.deepEqual(html`<abc ${'d'}/>`, { tag: 'abc', props: {d: true}, children: [] })
+	t.deepEqual(html`<abc ${'d'} />`, { tag: 'abc', props: { d: true }, children: [] })
+	t.deepEqual(html`<abc d=e/>`, { tag: 'abc', props: { d: 'e' }, children: [] })
+	t.deepEqual(html`<abc d=e />`, { tag: 'abc', props: {d: 'e'}, children: [] })
+	t.deepEqual(html`<abc d=${'e'}/>`, { tag: 'abc', props: {d: 'e'}, children: [] })
+	t.deepEqual(html`<abc d=${'e'} />`, { tag: 'abc', props: {d: 'e'}, children: [] })
+	t.deepEqual(html`<abc d=${'e'}  />`, { tag: 'abc', props: {d: 'e'}, children: [] })
+	t.deepEqual(html`<abc d="e"/>`, { tag: 'abc', props: {d: 'e'}, children: [] })
+	t.deepEqual(html`<abc d="e" />`, { tag: 'abc', props: {d: 'e'}, children: [] })
+	t.deepEqual(html`<abc d="e f"/>`, { tag: 'abc', props: {d: 'e f'}, children: [] })
+	t.deepEqual(html`<abc d="e f" />`, { tag: 'abc', props: {d: 'e f'}, children: [] })
 	t.end()
 })
 
