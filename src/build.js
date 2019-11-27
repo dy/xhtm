@@ -1,4 +1,3 @@
-// - no recursion
 // - direct arrays storing in cache
 // - indexof 2 vs regex
 
@@ -11,7 +10,7 @@ export function build (str) {
 	}
 
 	while(str) {
-		let openTagIdx0, openTagIdx1, closeTagIdx0, closeTagIdx1
+		let openTagIdx0, openTagIdx1
 		openTagIdx0 = find('<')
 		if (openTagIdx0 < 0) {
 			curr.push(str)
