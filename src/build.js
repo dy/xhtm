@@ -4,14 +4,9 @@
 export function build (str) {
 	let curr = [], stack = [curr]
 
-	const find = (char, from = 0) => {
-		let idx = (from ? str.slice(from) : str).indexOf(char)
-		return idx < 0 ? idx : idx + from
-	}
-
 	while(str) {
 		let openTagIdx0, openTagIdx1
-		openTagIdx0 = find('<')
+		openTagIdx0 = str.indexOf('<')
 		if (openTagIdx0 < 0) {
 			curr.push(str)
 			break
@@ -24,11 +19,11 @@ export function build (str) {
 			let parent = stack.pop()
 			parent.push(curr)
 			curr = parent
-			str = str.slice(find('>', openTagIdx0 + 1) + 1)
+			str = str.slice(str.indexOf('>', openTagIdx0 + 1) + 1)
 			continue
 		}
 
-		openTagIdx1 = find('>', openTagIdx0)
+		openTagIdx1 = str.indexOf('>', openTagIdx0)
 
 		// parse quotes, push end tag outside of quotes
 		let quote, quoteIdx0, quoteIdx1
@@ -36,8 +31,8 @@ export function build (str) {
 		while (max--) {
 			let origStr = str
 			str = origStr.slice(0, openTagIdx1)
-			let dQuoteIdx = find('"', (quoteIdx1 || openTagIdx0) + 1)
-			let sQuoteIdx = find("'", (quoteIdx1 || openTagIdx0) + 1)
+			let dQuoteIdx = str.indexOf('"', (quoteIdx1 || openTagIdx0) + 1)
+			let sQuoteIdx = str.indexOf("'", (quoteIdx1 || openTagIdx0) + 1)
 			quoteIdx0 = dQuoteIdx < 0 ? sQuoteIdx : dQuoteIdx
 			str = origStr
 
@@ -45,11 +40,11 @@ export function build (str) {
 			if (quoteIdx0 < 0) break
 
 			quote = str[quoteIdx0]
-			quoteIdx1 = find(quote, quoteIdx0 + 1)
+			quoteIdx1 = str.indexOf(quote, quoteIdx0 + 1)
 
 			if (quoteIdx1 > openTagIdx1) {
 				// push closing tag forward
-				openTagIdx1 = find('>', openTagIdx1 + 1)
+				openTagIdx1 = str.indexOf('>', openTagIdx1 + 1)
 			}
 		}
 
