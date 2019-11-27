@@ -69,16 +69,16 @@ export default function (statics) {
 	const props = (currProps=null) => {
 		next(/\S/)
 
-		if (/^\/?>/.test(chunk)) {
-		// if ((chunk[0] === '/' && chunk[1] === '>') || curr === '>') {
+		// if (/^\/?>/.test(chunk)) {
+		if (chunk.slice(0, 2) === '/>' || curr === '>') {
 			return currProps
 		}
 
 		if (!currProps) currProps = {}
 
 		// ...${}
-		if (/^\.\.\./.test(chunk)) {
-		// if (chunk[0] === '.' && chunk[1] === '.' && chunk[2] === '.') {
+		// if (/^\.\.\./.test(chunk)) {
+		if (chunk.slice(0, 3) === '...') {
 			let field = []
 			next(/\s|>|\//, [], field)
 			Object.assign(currProps, field[0])
