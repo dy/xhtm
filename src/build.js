@@ -7,23 +7,23 @@ export default function (statics) {
 
 	let chunk = statics[0], curr = chunk[0], i = 0
 
-	let next = (c, a=[], b=[]) => {
+	let next = (c, a, b) => {
 		let idx = !c ? 1 : chunk.search(c)
 
 		if (idx >= 0) {
-			a.push(chunk.slice(0, idx))
-			chunk = chunk.slice(idx)
+			if (a) a.push(idx ? chunk.slice(0, idx) : '')
+			if (idx) chunk = chunk.slice(idx)
 			curr = chunk[0]
 			return next
 		}
 
-		a.push(chunk)
+		if (a) a.push(chunk)
 		chunk = statics[++i]
 
 		// end
 		if (chunk == null) return next = () => next
 
-		b.push(arguments[i])
+		if (b) b.push(arguments[i])
 		return next(c, a, b)
 	}
 
@@ -67,9 +67,7 @@ export default function (statics) {
 	}
 
 	const props = (currProps=null) => {
-		next(/\S/)
-
-		// if (/^\/?>/.test(chunk)) {
+		while (curr === ' ' || curr === '\n' || curr === '\r') next()
 		if (chunk.slice(0, 2) === '/>' || curr === '>') {
 			return currProps
 		}
@@ -77,7 +75,6 @@ export default function (statics) {
 		if (!currProps) currProps = {}
 
 		// ...${}
-		// if (/^\.\.\./.test(chunk)) {
 		if (chunk.slice(0, 3) === '...') {
 			let field = []
 			next(/\s|>|\//, [], field)
