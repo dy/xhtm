@@ -1,3 +1,6 @@
+// - simpler unicodes via split
+// -
+
 export default function (statics) {
 	const h = this
 	const nameTpl = this.nameTpl || ((s, ...f) => {
@@ -8,7 +11,19 @@ export default function (statics) {
 	let chunk = statics[0], curr = chunk[0], i = 0
 
 	let next = (c, a, b) => {
-		let idx = !c ? 1 : chunk.search(c)
+		let idx
+
+		// fast replacement for chunk.search
+		if (c && c.length) {
+			idx = -1
+			for (let i = 0; i < c.length; i++) {
+				let possibleIdx = chunk.indexOf(c[i])
+				if (possibleIdx >= 0) {
+					if (idx < 0 || possibleIdx < idx) idx = possibleIdx
+				}
+			}
+		}
+		else idx = !c ? 1 : c
 
 		if (idx >= 0) {
 			if (a) a.push(idx ? chunk.slice(0, idx) : '')
@@ -32,7 +47,7 @@ export default function (statics) {
 		if (chunk == null || curr === '/') return nodes.filter(v => v || v === 0)
 
 		if (chunk.slice(0, 3) === '!--') {
-			next()()()('-->')()()()
+			next(3)(['-->'])(3)
 			return text(nodes)
 		}
 
@@ -59,7 +74,8 @@ export default function (statics) {
 			next()(quote, statics, fields)()
 		}
 		else {
-			next(/\s|=|>|\/>/, statics, fields)
+			// next(/\s|=|>|\/>/, statics, fields)
+			next([...' \n\r=>', '/>'], statics, fields)
 		}
 
 		fields.unshift(statics.raw = statics)
@@ -77,7 +93,7 @@ export default function (statics) {
 		// ...${}
 		if (chunk.slice(0, 3) === '...') {
 			let field = []
-			next(/\s|>|\//, [], field)
+			next(' >/', null, field)
 			Object.assign(currProps, field[0])
 			return props(currProps)
 		}
