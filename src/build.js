@@ -89,15 +89,41 @@ export const build = function (statics) {
 			char = statics[i][j];
 
 			if (mode === MODE_TEXT) {
-				if (char === '<') {
-					// commit buffer
-					commit();
-					current = [current];
-					mode = MODE_TAGNAME;
+				// boost A
+				// let idx = statics[i].indexOf('<', j)
+				// if (idx < 0) idx = statics[i].length
+				// buffer = statics[i].slice(j, idx)
+				// j = idx
+				// if (idx < statics[i].length) {
+				// 	commit()
+				// 	current = [current]
+				// 	mode = MODE_TAGNAME
+				// }
+
+				// boost B
+				let idx = statics[i].indexOf('<', j)
+				if (idx < 0) {
+					buffer = statics[i].slice(j)
+					j = statics[i].length
 				}
 				else {
-					buffer += char;
+					buffer = statics[i].slice(j, idx)
+					j = idx
+					commit()
+					current = [current]
+					mode = MODE_TAGNAME
 				}
+
+				// if (char === '<') {
+				// 	// commit buffer
+				// 	// console.log(123, buffer, j, idx, mode)
+				// 	commit();
+				// 	current = [current];
+				// 	mode = MODE_TAGNAME;
+				// }
+				// else {
+				// 	buffer += char;
+				// }
 			}
 			else if (mode === MODE_COMMENT) {
 				// Ignore everything until the last three characters are '-', '-' and '>'
