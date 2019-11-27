@@ -16,7 +16,7 @@ export default function (statics) {
 		// fast replacement for chunk.search
 		if (c && c.length) {
 			idx = -1
-			for (let i = 0; i < c.length; i++) {
+			for (let i = c.length; i--;) {
 				let possibleIdx = chunk.indexOf(c[i])
 				if (possibleIdx >= 0) {
 					if (idx < 0 || possibleIdx < idx) idx = possibleIdx
