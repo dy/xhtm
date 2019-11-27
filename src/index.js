@@ -49,7 +49,7 @@ function evaluate(h, arr, fields, result) {
       evalStr(arr[i], result)
     }
     else {
-      let [tag, props, ...children] = str
+      let [tag, props, ...children] = arr[i]
       let callProps = {}
       for (let i = 0; i < props.length; i+= 2) {
         let propName = evalStr(props[i], []).join('')

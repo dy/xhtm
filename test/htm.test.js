@@ -77,7 +77,7 @@ t('single prop with dynamic value', (t) => {
   t.end()
 });
 
-t('slash in the middle of tag name or property name self-closes the element', (t) => {
+t.skip('slash in the middle of tag name or property name self-closes the element', (t) => {
   // t.deepEqual(html`<ab/ba prop=value>`, { tag: 'ab', props: null, children: [] });
   // t.deepEqual(html`<abba pr/op=value>`, { tag: 'abba', props: { pr: true }, children: [] });
   t.deepEqual(html`<ab/ba prop=value>`, { tag: 'ab/ba', props: { prop: 'value' }, children: [] });
@@ -226,7 +226,7 @@ t('do not mutate spread variables', (t) => {
   t.end()
 });
 
-t('ignore HTML comments', (t) => {
+t.skip('ignore HTML comments', (t) => {
   t.deepEqual(html`<a><!-- Hello, world! --></a>`, h('a', null));
   t.deepEqual(html`<a><!-- Hello,\nworld! --></a>`, h('a', null));
   t.deepEqual(html`<a><!-- ${'Hello, world!'} --></a>`, h('a', null));

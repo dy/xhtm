@@ -6,8 +6,12 @@ const html = htm.bind((tag, props, ...children) => {
 	return { tag, props, children }
 });
 
-t.only('base case', t => {
+t('base case', t => {
 	t.deepEqual(html`foo <a bar>baz${'qux'}</a>`, ['foo ', { tag: 'a', props: { bar: true }, children: ['baz', 'qux'] }])
+	t.end()
+})
+
+t.skip('tags in params', t => {
 	t.end()
 })
 
