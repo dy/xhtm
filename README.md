@@ -1,6 +1,6 @@
 
 <h1 align="center">
-  XHTM (eXtended Hyperscript Tagged Markup)
+  XHTM (eXtensible Hyperscript Tagged Markup)
 </h1>
 <p align="center">
   <a href="https://www.npmjs.org/package/xhtm"><img src="https://img.shields.io/npm/v/htm.svg?style=flat" alt="npm"></a>
@@ -11,8 +11,8 @@
   <img src="https://i.imgur.com/0ph8dbS.png" width="572" alt="hyperscript tagged markup demo">
 </p>
 
-`xhtm` provides alternative functional implementation of `htm`, with HTML syntax support and additional features.
-Because _htm_ is intended to be [JSX-compatible](https://github.com/developit/htm/issues/91#issuecomment-498741042), not HTML-compatible.
+`xhtm` provides alternative to `htm`, allowing extensions, like HTML/XML syntax, custom attribute/tag name interpolation, different spaces handling etc., while keeping htm performance and compactness.
+Because _htm_ is intended to be strictly [JSX-compatible](https://github.com/developit/htm/issues/91#issuecomment-498741042).
 
 ## Improvements over HTM
 
@@ -36,12 +36,12 @@ Because _htm_ is intended to be [JSX-compatible](https://github.com/developit/ht
 * No integrations exported.
 * No babel compilers available (temporarily).
 * Simplified tests runner.
-* Simplified significant part of source code.
+* Simplified source code.
 
 
 ## Installation & Usage
 
-`xhtm` is compatible with `htm` and can be used as drop-in replacement.
+`xhtm` is by default compatible with `htm` and can be used as drop-in replacement.
 
 [![NPM](https://nodei.co/npm/xhtm.png?mini=true)](https://nodei.co/npm/xhtm/)
 
@@ -56,7 +56,22 @@ render(html`
 `, document.getElementById('app'))
 ```
 
-For the rest, refer to [htm docs](https://ghub.io/htm).
+For `htm` manual, refer to [htm docs](https://ghub.io/htm).
+
+`xhtm` also provides `xhtm/html` entry, that supports HTML syntax:
+
+```js
+import htm from 'xhtm/html'
+import { render, h } from 'preact'
+const html.bind(h)
+
+render(html`
+<!doctype>
+<p>
+  Hello,<br>
+  World!
+`, document.getElementById('app'))
+```
 
 ## Comparison
 
