@@ -1,5 +1,8 @@
+const PLACEHOLDER = '\u0000'
+
 export default function (statics, ...fields) {
-	statics = statics.map(s => s.replace(/\s+/, ' '))
+	// statics = statics.map(s => s.replace(/\s+/, ' '))
+	let str = statics.join(PLACEHOLDER).replace(/\s+/, ' ')
 
 	let h = this,
 			nameTpl = this.nameTpl || ((s, ...f) => {
@@ -7,25 +10,32 @@ export default function (statics, ...fields) {
 				return String.raw(s, ...f)
 			}),
 			valueTpl = this.valueTpl || nameTpl,
-			field = 0, i = 0, str = statics[0], current = []
+			field = 0, i = 0, current = []
 
 		let end = 100
 
 	const next = (c=1, s, f) => {
 		let idx
-
-		while (str && (idx = c.trim ? str.indexOf(c, i) : c.exec ? (~(idx = str.slice(i).search(c)) ? idx + i : idx) : c) < 0) {
-			if (!end--) throw ('ERROR')
-			if (s) {
-				s.push(str.slice(i))
-				f.push(fields[field])
-			}
-			str = statics[++field] || ''
+		if (c.trim) {
+			idx = str.indexOf(c, i)
+		}
+		else if (c.exec) {
+			idx = str.slice(i).search(c)
+			if (~idx) idx += i
+		}
+		else {
+			idx = c
 		}
 
-		if (s) {
-			s.push(str.slice(i, idx))
+		if (s && i != idx) {
+			str.slice(i, idx).split(PLACEHOLDER).map(part => {
+				s.push(part)
+				f.push(fields[field++])
+			})
+			field--
+			f.pop()
 		}
+
 		// skip searched term
 		i = idx + (c.length || 1)
 	}
@@ -37,15 +47,17 @@ export default function (statics, ...fields) {
 		if (!end--) throw ('ERROR')
 
 		// <!--
-		if (str.substr(i, 3) === '!--') {
-			next('-->')
-			text()
-		}
-		else if (str[i] === '/') {
-			next('>')
-		}
-		else {
-			tag()
+		if (str) {
+			if (str.substr(i, 3) === '!--') {
+				next('-->')
+				text()
+			}
+			else if (str[i] === '/') {
+				next('>')
+			}
+			else {
+				tag()
+			}
 		}
 	}
 
@@ -63,16 +75,16 @@ export default function (statics, ...fields) {
 
 			// ...${}
 			if (prop === '...') {
-				Object.assign(props, fields[i++])
+				Object.assign(props, fields[field++])
 			}
 			else {
-				current[1][prop] = str[i-1] !== '=' || name(valueTpl)
+				current[1][prop] = (!str[i] || str[i-1] !== '=') || name(valueTpl)
 			}
 		}
 
 		// collect children if non self-closing
 		// >[...]<
-		if (str && str[i-2] !== '/') text()
+		if (str[i] && str[i-2] !== '/') text()
 
 		parent.push(h(...current))
 		current = parent
@@ -82,16 +94,9 @@ export default function (statics, ...fields) {
 		let s = [], f = []
 		if (str[i] === '"' || str[i] === "'") {
 			next(str[i++], s, f)
+			i++ // space after quote
 		}
 		else {
-			// check initial field
-			if (!str[i]) {
-				s.push('')
-				f.push(fields[field++])
-				str = statics[field]
-				i = 0
-			}
-
 			next(/ |=|>|\/>/, s, f)
 		}
 
@@ -102,7 +107,9 @@ export default function (statics, ...fields) {
 		return tpl(s.raw = s, ...f)
 	}
 
-	while (str && str[i]) text()
+	while (str[i]) {
+		text()
+	}
 
 	return current.length < 2 ? current[0] : current
 }
