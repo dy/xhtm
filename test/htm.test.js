@@ -80,8 +80,8 @@ t('single prop with dynamic value', (t) => {
 t('slash in the middle of tag name or property name self-closes the element', (t) => {
   // t.deepEqual(html`<ab/ba prop=value>`, { tag: 'ab', props: null, children: [] });
   // t.deepEqual(html`<abba pr/op=value>`, { tag: 'abba', props: { pr: true }, children: [] });
-  t.deepEqual(html`<ab/ba prop=value>`, { tag: 'ab/ba', props: { prop: 'value' }, children: [] });
-  t.deepEqual(html`<abba pr/op=value>`, { tag: 'abba', props: { 'pr/op': 'value' }, children: [] });
+  t.deepEqual(html`<ab/ba prop=value/>`, { tag: 'ab/ba', props: { prop: 'value' }, children: [] });
+  t.deepEqual(html`<abba pr/op=value/>`, { tag: 'abba', props: { 'pr/op': 'value' }, children: [] });
   t.end()
 });
 

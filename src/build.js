@@ -1,96 +1,108 @@
-export default function (statics) {
-	const h = this
-	const nameTpl = this.nameTpl || ((s, ...f) => {
-		if (!s[0] && f.length === 1 && !s[1]) return f[0]
-		return String.raw(s, ...f)
-	})
+export default function (statics, ...fields) {
+	statics = statics.map(s => s.replace(/\s+/, ' '))
 
-	let chunk = statics[0], curr = chunk[0], i = 0
+	let h = this,
+			nameTpl = this.nameTpl || ((s, ...f) => {
+				if (!s[0] && f.length === 1 && !s[1]) return f[0]
+				return String.raw(s, ...f)
+			}),
+			valueTpl = this.valueTpl || nameTpl,
+			field = 0, i = 0, str = statics[0], current = []
 
-	let next = (c, a=[], b=[]) => {
-		let idx = !c ? 1 : chunk.search(c)
+		let end = 100
 
-		if (idx >= 0) {
-			a.push(chunk.slice(0, idx))
-			chunk = chunk.slice(idx)
-			curr = chunk[0]
-			return next
+	const next = (c=1, s, f) => {
+		let idx
+
+		while (str && (idx = c.trim ? str.indexOf(c, i) : c.exec ? (~(idx = str.slice(i).search(c)) ? idx + i : idx) : c) < 0) {
+			if (!end--) throw ('ERROR')
+			if (s) {
+				s.push(str.slice(i))
+				f.push(fields[field])
+			}
+			str = statics[++field] || ''
 		}
 
-		a.push(chunk)
-		chunk = statics[++i]
-
-		// end
-		if (chunk == null) return next = () => next
-
-		b.push(arguments[i])
-		return next(c, a, b)
+		if (s) {
+			s.push(str.slice(i, idx))
+		}
+		// skip searched term
+		i = idx + (c.length || 1)
 	}
 
-	const text = (nodes) => {
-		next('<', nodes, nodes)()
-		if (chunk == null || curr === '/') return nodes.filter(v => v || v === 0)
+	// [...]<
+	const text = () => {
+		next('<', current, current)
 
-		if (/^!--/.test(chunk)) {
-		// if (curr === '!' && chunk[1] === '!' && chunk[2] === '-' && chunk[3] === '-') {
-			next()()()('-->')()()()
-			return text(nodes)
+		if (!end--) throw ('ERROR')
+
+		// <!--
+		if (str.substr(i, 3) === '!--') {
+			next('-->')
+			text()
 		}
-
-		// tag
-		let tagName = name(false)
-		let tagProps = props()
-		let children = []
-
-		// non self-closing tag
-		if (curr === '>') {
-			next()
-			children = text(children)
-		}
-		nodes.push(h(tagName, tagProps, ...children))
-
-		next('>')()
-
-		return text(nodes)
-	}
-
-	const name = (quotes=true) => {
-		let quote = curr, statics = [], fields = []
-		if (quotes && (quote === '"' || quote === "'")) {
-			next()(quote, statics, fields)()
+		else if (str[i] === '/') {
+			next('>')
 		}
 		else {
-			next(/\s|=|>|\/>/, statics, fields)
+			tag()
 		}
-
-		fields.unshift(statics.raw = statics)
-		return nameTpl(...fields)
 	}
 
-	const props = (currProps=null) => {
-		next(/\S/)
+	// <
+	const tag = () => {
+		// [tag, props, ...children]
+		let parent = current
+		current = [name(nameTpl), null]
 
-		if (/^\/?>/.test(chunk)) {
-		// if ((chunk[0] === '/' && chunk[1] === '>') || curr === '>') {
-			return currProps
+		while (str && str[i - 1] !== '>') {
+			if (!end--) throw ('ERROR')
+			if (!current[1]) current[1] = {}
+
+			let prop = name(nameTpl)
+
+			// ...${}
+			if (prop === '...') {
+				Object.assign(props, fields[i++])
+			}
+			else {
+				current[1][prop] = str[i-1] !== '=' || name(valueTpl)
+			}
 		}
 
-		if (!currProps) currProps = {}
+		// collect children if non self-closing
+		// >[...]<
+		if (str && str[i-2] !== '/') text()
 
-		// ...${}
-		if (/^\.\.\./.test(chunk)) {
-		// if (chunk[0] === '.' && chunk[1] === '.' && chunk[2] === '.') {
-			let field = []
-			next(/\s|>|\//, [], field)
-			Object.assign(currProps, field[0])
-			return props(currProps)
-		}
-		let propName = name()
-		currProps[propName] = curr === '=' ? (next(), name()) : true
-
-		return props(currProps)
+		parent.push(h(...current))
+		current = parent
 	}
 
-	let nodes = text([])
-	return nodes.length > 1 ? nodes : nodes[0]
+	const name = tpl => {
+		let s = [], f = []
+		if (str[i] === '"' || str[i] === "'") {
+			next(str[i++], s, f)
+		}
+		else {
+			// check initial field
+			if (!str[i]) {
+				s.push('')
+				f.push(fields[field++])
+				str = statics[field]
+				i = 0
+			}
+
+			next(/ |=|>|\/>/, s, f)
+		}
+
+		// compensate space before end
+		if (str[i] === '/') i++
+		if (str[i] === '>') i++
+
+		return tpl(s.raw = s, ...f)
+	}
+
+	while (str && str[i]) text()
+
+	return current.length < 2 ? current[0] : current
 }
