@@ -98,12 +98,12 @@ t('two props with dynamic values', (t) => {
   t.end()
 });
 
-t.only('prop with multiple static and dynamic values get concatenated as strings', (t) => {
-  // t.deepEqual(html`<a href="before${'foo'}after" />`, { tag: 'a', props: { href: 'beforefooafter' }, children: [] });
-  // t.deepEqual(html`<a href=${1}${1} />`, { tag: 'a', props: { href: '11' }, children: [] });
-  // t.deepEqual(html`<a href=${1}between${1} />`, { tag: 'a', props: { href: '1between1' }, children: [] });
+t('prop with multiple static and dynamic values get concatenated as strings', (t) => {
+  t.deepEqual(html`<a href="before${'foo'}after" />`, { tag: 'a', props: { href: 'beforefooafter' }, children: [] });
+  t.deepEqual(html`<a href=${1}${1} />`, { tag: 'a', props: { href: '11' }, children: [] });
+  t.deepEqual(html`<a href=${1}between${1} />`, { tag: 'a', props: { href: '1between1' }, children: [] });
   t.deepEqual(html`<a href=/before/${'foo'}/after />`, { tag: 'a', props: { href: '/before/foo/after' }, children: [] });
-  // t.deepEqual(html`<a href=/before/${'foo'}/>`, { tag: 'a', props: { href: '/before/foo' }, children: [] });
+  t.deepEqual(html`<a href=/before/${'foo'}/>`, { tag: 'a', props: { href: '/before/foo' }, children: [] });
   t.end()
 });
 

@@ -78,7 +78,7 @@ export default function (statics, ...fields) {
 				Object.assign(props, fields[field++])
 			}
 			else {
-				current[1][prop] = (!str[i] || str[i-1] !== '=') || name(valueTpl)
+				current[1][prop] = (str[i] && (str[i-1] === '=' || str[i-2] === '=')) ? name(valueTpl) : true
 			}
 		}
 
@@ -101,7 +101,7 @@ export default function (statics, ...fields) {
 		}
 
 		// compensate space before end
-		if (str[i] === '/') i++
+		if (str.substr(i, 2) === '/>') i++
 		if (str[i] === '>') i++
 
 		return tpl(s.raw = s, ...f)
