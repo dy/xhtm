@@ -107,15 +107,16 @@ t('prop with multiple static and dynamic values get concatenated as strings', (t
   t.end()
 });
 
-t.only('spread props', (t) => {
+t('spread props', (t) => {
+  // t.deepEqual(html`<a  />`, { tag: 'a', props: null, children: [] });
   t.deepEqual(html`<a ...${{ foo: 'bar' }} />`, { tag: 'a', props: { foo: 'bar' }, children: [] });
-  // t.deepEqual(html`<a b ...${{ foo: 'bar' }} />`, { tag: 'a', props: { b: true, foo: 'bar' }, children: [] });
-  // t.deepEqual(html`<a b c ...${{ foo: 'bar' }} />`, { tag: 'a', props: { b: true, c: true, foo: 'bar' }, children: [] });
-  // t.deepEqual(html`<a ...${{ foo: 'bar' }} b />`, { tag: 'a', props: { b: true, foo: 'bar' }, children: [] });
-  // t.deepEqual(html`<a b="1" ...${{ foo: 'bar' }} />`, { tag: 'a', props: { b: '1', foo: 'bar' }, children: [] });
-  // t.deepEqual(html`<a x="1"><b y="2" ...${{ c: 'bar' }}/></a>`, h('a', { x: '1' }, h('b', { y: '2', c: 'bar' })));
-  // t.deepEqual(html`<a b=${2} ...${{ c: 3 }}>d: ${4}</a>`, h('a', { b: 2, c: 3 }, 'd: ', 4));
-  // t.deepEqual(html`<a ...${{ c: 'bar' }}><b ...${{ d: 'baz' }}/></a>`, h('a', { c: 'bar' }, h('b', { d: 'baz' })));
+  t.deepEqual(html`<a b ...${{ foo: 'bar' }} />`, { tag: 'a', props: { b: true, foo: 'bar' }, children: [] });
+  t.deepEqual(html`<a b c ...${{ foo: 'bar' }} />`, { tag: 'a', props: { b: true, c: true, foo: 'bar' }, children: [] });
+  t.deepEqual(html`<a ...${{ foo: 'bar' }} b />`, { tag: 'a', props: { b: true, foo: 'bar' }, children: [] });
+  t.deepEqual(html`<a b="1" ...${{ foo: 'bar' }} />`, { tag: 'a', props: { b: '1', foo: 'bar' }, children: [] });
+  t.deepEqual(html`<a x="1"><b y="2" ...${{ c: 'bar' }}/></a>`, h('a', { x: '1' }, h('b', { y: '2', c: 'bar' })));
+  t.deepEqual(html`<a b=${2} ...${{ c: 3 }}>d: ${4}</a>`, h('a', { b: 2, c: 3 }, 'd: ', 4));
+  t.deepEqual(html`<a ...${{ c: 'bar' }}><b ...${{ d: 'baz' }}/></a>`, h('a', { c: 'bar' }, h('b', { d: 'baz' })));
   t.end()
 });
 
@@ -167,8 +168,7 @@ t('dynamic child', (t) => {
 t('mixed text + dynamic children', (t) => {
   t.deepEqual(html`<a>${'foo'}bar</a>`, { tag: 'a', props: null, children: ['foo', 'bar'] });
   t.deepEqual(html`<a>before${'foo'}after</a>`, { tag: 'a', props: null, children: ['before', 'foo', 'after'] });
-  // t.deepEqual(html`<a>foo${null}</a>`, { tag: 'a', props: null, children: ['foo', null] });
-  t.deepEqual(html`<a>foo${null}</a>`, { tag: 'a', props: null, children: ['foo'] });
+  t.deepEqual(html`<a>foo${null}</a>`, { tag: 'a', props: null, children: ['foo', null] });
   t.deepEqual(html`<a>foo${0}</a>`, { tag: 'a', props: null, children: ['foo', 0] });
   t.end()
 });
