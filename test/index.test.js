@@ -16,12 +16,12 @@ t('plain text', t => {
 	t.deepEqual(html`a`, `a`)
 	t.deepEqual(html`a${'b'}c`, ['a', 'b', 'c'])
 	t.deepEqual(html`a${1}b${2}c`, ['a', 1, 'b', 2, 'c'])
-	t.deepEqual(html`foo${''}bar${''}`, ['foo', 'bar'])
+	t.deepEqual(html`foo${''}bar${''}`, ['foo', '', 'bar', ''])
 	t.deepEqual(html`${'foo'}${'bar'}`, ['foo', 'bar'])
-	t.deepEqual(html`${''}${''}`, undefined)
+	t.deepEqual(html`${''}${''}`, ['', ''])
 	t.end()
 })
-t('tag cases', t => {
+t.only('tag cases', t => {
 	// special case: both self-closing empty tag and ending tag
 	// t.deepEqual(html`</>`, { tag: '', props: null, children: []})
 
@@ -37,12 +37,15 @@ t('tag cases', t => {
 	// t.deepEqual(html`<${'abc'} />`, { tag: 'abc', props: null, children: [] })
 	// t.deepEqual(html`<a${'bc'} />`, { tag: 'abc', props: null, children: [] })
 	// t.deepEqual(html`<${'ab'}c />`, { tag: 'abc', props: null, children: [] })
+	// t.deepEqual(html`<${'a'}${'b'}${'c'} />`, { tag: 'abc', props: null, children: [] })
 	// t.deepEqual(html`<abc d/>`, { tag: 'abc', props: { d: true }, children: [] })
 	// t.deepEqual(html`<abc d />`, { tag: 'abc', props: { d: true }, children: [] })
 	// t.deepEqual(html`<abc d  />`, { tag: 'abc', props: { d: true }, children: [] })
 	// t.deepEqual(html`<abc ${'d'}/>`, { tag: 'abc', props: { d: true }, children: [] })
 	// t.deepEqual(html`<abc ${'d'} />`, { tag: 'abc', props: { d: true }, children: [] })
-	// t.deepEqual(html`<abc d=e/>`, { tag: 'abc', props: { d: 'e' }, children: [] })
+	// t.deepEqual(html`<abc  ${'d'}  />`, { tag: 'abc', props: { d: true }, children: [] })
+	// t.deepEqual(html`<abc   ${'d'}   />`, { tag: 'abc', props: { d: true }, children: [] })
+	t.deepEqual(html`<abc d=e/>`, { tag: 'abc', props: { d: 'e' }, children: [] })
 	// t.deepEqual(html`<abc d=e />`, { tag: 'abc', props: { d: 'e' }, children: [] })
 	// t.deepEqual(html`<abc d=e  />`, { tag: 'abc', props: { d: 'e' }, children: [] })
 	// t.deepEqual(html`<abc d=${'e'}/>`, { tag: 'abc', props: { d: 'e' }, children: [] })
