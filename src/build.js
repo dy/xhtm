@@ -9,12 +9,12 @@ export default function (statics, ...fields) {
 	// statics = statics.map(part => part.replace(/\s+/, ' '))
 
 	const text = () => {
-		if (typeof curr === 'number') {
+		if (!curr) {
 			if (buf) {
 				level.push(buf)
 				buf = ''
 			}
-			if (curr < fields.length) level.push(fields[curr])
+			if (i < fields.length) level.push(fields[i])
 		}
 		else if (curr === '<') {
 			if (buf) {
@@ -48,17 +48,15 @@ export default function (statics, ...fields) {
 	}
 
 	const node = () => {
-		if (typeof curr === 'number') {
+		if (!curr) {
 			if (buf === '...') {
-				level[2] = Object.assign((level[2] || {}), fields[curr])
-				prop = null
-				buf = ''
+				level[2] = Object.assign((level[2] || {}), fields[i])
 			}
-			else if (curr < fields.length) {
+			else if (i < fields.length) {
 				if (args[0].length < args.length) {
 					args[0].push(buf)
 				}
-				args.push(fields[curr])
+				args.push(fields[i])
 			}
 			buf = ''
 		}
@@ -106,7 +104,6 @@ export default function (statics, ...fields) {
 						}
 					}
 				}
-				// if (curr === ' ' && (str[j+1] === '>' || str.substr(j+1, 2) === '/>')) curr = str[++j]
 
 				if (str.substr(j, 2) === '/>') {
 					let node = h(...level.slice(1))
@@ -116,8 +113,6 @@ export default function (statics, ...fields) {
 					mode = text
 				}
 				else if (curr === '>') {
-					prop = null
-					buf = ''
 					mode = text
 				}
 			}
@@ -127,17 +122,15 @@ export default function (statics, ...fields) {
 		}
 	}
 
-	let mode = text, level = [0], buf = '', curr = 0, str, i, j, args = [[]], prop, quote
+	let mode = text, level = [], buf = '', curr, str, i, j, args = [[]], prop, quote
 
 	for (i = 0; i < statics.length; i++) {
 		str = statics[i]
-		for (j = 0; j < str.length; j++) {
-			curr = str[j]
-			mode()
-		}
-		curr = i
+		j = -1
+		while (curr = str[++j]) mode()
+		curr = null
 		mode()
 	}
 
-	return level.length < 3 ? level[1] : level.slice(1)
+	return level.length < 2 ? level[0] : level
 }

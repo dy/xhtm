@@ -3,9 +3,10 @@ import './perf.test.js'
 import t from 'tape'
 import htm from '../src/index.js'
 
-const html = htm.bind((tag, props, ...children) => {
+const h = (tag, props, ...children) => {
 	return { tag, props, children }
-});
+}
+const html = htm.bind(h);
 
 t('base case', t => {
 	t.deepEqual(html`foo <a bar>baz${'qux'}</a>`, ['foo ', { tag: 'a', props: { bar: true }, children: ['baz', 'qux'] }])
