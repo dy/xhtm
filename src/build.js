@@ -6,6 +6,8 @@ export default function (statics, ...fields) {
 		}),
 		valueTpl = this.valueTpl || nameTpl
 
+	// statics = statics.map(part => part.replace(/\s+/, ' '))
+
 	const text = () => {
 		if (typeof curr === 'number') {
 			if (buf) {
@@ -28,7 +30,8 @@ export default function (statics, ...fields) {
 			else {
 				level = [level, '', null]
 				mode = node
-				prop = buf = ''
+				prop = null
+				buf = ''
 				args = [[]]
 			}
 		}
@@ -40,62 +43,64 @@ export default function (statics, ...fields) {
 	const node = () => {
 		if (typeof curr === 'number') {
 			if (buf === '...') {
-				Object.assign(level[2], fields[curr])
+				level[2] = Object.assign((level[2] || {}), fields[curr])
 			}
 			else if (curr < fields.length) {
 				if (args[0].length < args.length) {
 					args[0].push(buf)
-					buf = ''
 				}
 				args.push(fields[curr])
 			}
+			buf = ''
 		}
 		else {
-			if (curr === quote) {
-				curr = ' '
+			if (quote && curr === quote) {
 				quote = ''
 			}
-			if (!quote && (curr === ' ' || curr === '\t' || curr === '\r' || curr === '\n' || curr === '=' || curr === '/' || curr === '>')) {
-				if (buf || args[0].length) {
-					args[0].push(buf)
-					buf = ''
+			else if (!quote && (curr === '"' || curr === "'")) {
+				quote = curr
+			}
+			else if (~` =>`.indexOf(curr) || str.substr(j, 2) === '/>') {
+				args[0].push(buf)
+				buf = ''
+				args[0].raw = args[0]
+				let stringified = nameTpl(...args)
+				args = [[]]
 
-					args[0].raw = args[0]
-					let stringified = nameTpl(...args)
-					args = [[]]
-					if (!level[1]) {
-						level[1] = stringified
-					} else {
-						if (!level[2]) {
-							level[2] = {}
-						}
-						if (curr === '=') {
-							prop = stringified
-							if (~`'"`.indexOf(str[j+1])) {
-								j++
-								quote = str[j]
-							}
+				// tag
+				if (!level[1]) {
+					level[1] = stringified
+				}
+				else {
+					if (!level[2]) level[2] = {}
+
+					// prop
+					if (curr === '=') {
+						prop = stringified
+					}
+					else {
+						if (prop == null) {
+							level[2][stringified] = true
 						}
 						else {
-							if (prop) {
-								level[2][prop] = stringified
-								prop = ''
-							}
-							else {
-								level[2][stringified] = true
-							}
+							level[2][prop] = stringified
+							prop = null
 						}
 					}
 				}
 
-				if (curr === '/') {
+				console.log(1, str.slice(j), stringified, prop)
+				if (curr === ' ' && (str[j+1] === '>' || str.substr(j+1, 2) === '/>')) curr = str[++j]
+
+				if (str.substr(j, 2) === '/>') {
 					let node = h(...level.slice(1))
 					level = level[0]
 					level.push(node)
 					j++
+					mode = text
 				}
 				else if (curr === '>') {
-					prop = ''
+					prop = null
 					buf = ''
 					mode = text
 				}
