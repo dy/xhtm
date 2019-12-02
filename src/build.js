@@ -51,7 +51,11 @@ export default function (statics, ...fields) {
 			}
 		}
 		else {
-			if (curr === ' ' || curr === '\t' || curr === '\r' || curr === '\n' || curr === '=' || curr === '/' || curr === '>') {
+			if (curr === quote) {
+				curr = ' '
+				quote = ''
+			}
+			if (!quote && (curr === ' ' || curr === '\t' || curr === '\r' || curr === '\n' || curr === '=' || curr === '/' || curr === '>')) {
 				if (buf || args[0].length) {
 					args[0].push(buf)
 					buf = ''
@@ -64,15 +68,22 @@ export default function (statics, ...fields) {
 					} else {
 						if (!level[2]) {
 							level[2] = {}
-							prop = stringified
 						}
 						if (curr === '=') {
-							level[2][prop] = stringified
-							prop = ''
+							prop = stringified
+							if (~`'"`.indexOf(str[j+1])) {
+								j++
+								quote = str[j]
+							}
 						}
 						else {
-							level[2][prop] = true
-							prop = stringified
+							if (prop) {
+								level[2][prop] = stringified
+								prop = ''
+							}
+							else {
+								level[2][stringified] = true
+							}
 						}
 					}
 				}
@@ -95,7 +106,7 @@ export default function (statics, ...fields) {
 		}
 	}
 
-	let mode = text, level = [0], buf = '', curr = 0, str, i, j, args = [[]], prop
+	let mode = text, level = [0], buf = '', curr = 0, str, i, j, args = [[]], prop, quote
 
 	for (i = 0; i < statics.length; i++) {
 		str = statics[i]
