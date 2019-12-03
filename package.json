@@ -12,11 +12,6 @@
     "start:bench": "parcel serve --no-hmr test/bench.html",
     "build": "microbundle build --no-sourcemap -f modern --target web"
   },
-  "files": [
-    "dist",
-    "mini",
-    "src"
-  ],
   "repository": "dy/xhtm",
   "keywords": [
     "Hyperscript Tagged Markup",
