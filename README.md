@@ -2,6 +2,8 @@
 <h1 align="center">
   XHTM (eXtensible Hyperscript Tagged Markup)
 </h1>
+
+<!--
 <p align="center">
   <a href="https://www.npmjs.org/package/xhtm"><img src="https://img.shields.io/npm/v/htm.svg?style=flat" alt="npm"></a>
   <a href="https://travis-ci.org/dy/xhtm"><img src="https://travis-ci.org/dy/xhtm.svg?branch=master" alt="npm"></a>
@@ -28,8 +30,6 @@ Because _htm_ is intended to be strictly [JSX-compatible](https://github.com/dev
 * Simple validation.
 * Smaller size.
 * Faster.
-
-<!-- * Parent reference for non-JSX template engines.-->
 
 ## Differences from HTM
 
@@ -77,3 +77,5 @@ For `htm` manual, refer to [htm docs](https://ghub.io/htm).
 | Static Compiler             | +         |                 |               |           |          |             |
 
 <p align="right">HK</p>
+
+-->
