@@ -1,6 +1,6 @@
 {
   "name": "xhtm",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "HTML Tagged Template syntax for Virtual DOM. Extension of HTM with HTML support.",
   "main": "dist/xhtm.js",
   "umd:main": "dist/xhtm.umd.js",
