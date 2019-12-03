@@ -1,3 +1,7 @@
+const FIELD = '\ue000'
+const TEXT = '\ue001'
+const QUOTES = `\ue002`
+
 export default function (statics, ...fields) {
 	let h = this,
 		nameTpl = this.nameTpl || ((s, ...f) => {
@@ -6,131 +10,86 @@ export default function (statics, ...fields) {
 		}),
 		valueTpl = this.valueTpl || nameTpl
 
-	// statics = statics.map(part => part.replace(/\s+/, ' '))
+	// replace fields
+	let str = statics.join(FIELD)
 
-	const text = () => {
-		if (!curr) {
-			if (buf) {
-				level.push(buf)
-				buf = ''
-			}
-			if (i < fields.length) level.push(fields[i])
-		}
-		else if (curr === '<') {
-			if (buf) {
-				level.push(buf)
-				buf = ''
-			}
-			if (str[j + 1] === '/') {
-				let node = h(...level.slice(1))
-				level = level[0]
-				level.push(node)
-				j = str.indexOf('>', j)
-			}
-			else if (str.substr(j + 1, 3) === '!--') {
-				j += 3
-				while ((j = str.indexOf('-->', j)) < 0) {
-					str = statics[++i]
-				}
-				j += 2
-			}
-			else {
-				level = [level, '', null]
-				mode = node
-				prop = null
-				buf = ''
-				args = [[]]
-			}
-		}
-		else {
-			buf += curr
-		}
+	// remove spaces
+	str = str.replace(/\s+/g, ' ')
+
+	// replace texts
+	let texts = []
+	str = str.replace(/(?:^|>)([^<]*)(?:$|<)/g, (match, text, idx) => {
+		texts.push(text)
+		return TEXT
+	})
+
+	// replace quotes
+	let quotes = []
+	str = str.replace(/'([^']*)'|"([^"]*)"/g, (match, singleValue, doubleValue, idx) => {
+		return (quotes.push(singleValue || doubleValue), QUOTES)
+	})
+
+	// normalize tag ends
+	str = str.replace(/\b\/(?=\ue001|$)/g, ' /')
+
+	let current = [], char, buf = '', i = -1, iText = 0, iField = 0, iQuote = 0
+
+	const evaluate = (str, s=[], f=[]) => {
+		// unwrap quotes
+		str = str.replace(/\ue002/g, (match, idx) => quotes[iQuote++])
+
+		// unwrap fields
+		let i = -1
+		str.replace(/\ue000/g, (match, idx) => {
+			s.push(str.slice(i + 1, i = idx))
+			f.push(fields[iField++])
+		})
+		s.push(str.slice(i + 1))
+
+		s.raw = s
+		return [s, ...f]
 	}
+	while (char = str[++i]) {
+		if (char === TEXT) {
+			let close = buf[0] === '/'
 
-	const node = () => {
-		if (!curr) {
-			if (buf === '...') {
-				level[2] = Object.assign((level[2] || {}), fields[i])
-			}
-			else if (i < fields.length) {
-				if (args[0].length < args.length) {
-					args[0].push(buf)
-				}
-				args.push(fields[i])
-			}
-			buf = ''
-		}
-		else {
-			if (quote) {
-				if (curr === quote) {
-					args[0].push(buf)
-					buf = ''
-					quote = ''
-				}
-				else {
-					buf += curr
-				}
-			}
-			else if (!quote && (curr === '"' || curr === "'")) {
-				quote = curr
-			}
-			else if (~` =>`.indexOf(curr) || str.substr(j, 2) === '/>') {
-				if (buf || args[0].length) {
-					args[0].push(buf)
-					buf = ''
-					args[0].raw = args[0]
-					let stringified = nameTpl(...args)
-					args = [[]]
+			if (!close) {
+				let [tag, ...attrs] = buf.split(' ')
+				current = [current, nameTpl(...evaluate(tag)), null]
 
-					// tag
-					if (!level[1]) {
-						level[1] = stringified
-					}
-					else {
-						if (!level[2]) level[2] = {}
+				close = !!attrs.pop()
 
-						// prop
-						if (curr === '=') {
-							prop = stringified
+				if (attrs.length) {
+					let props = current[2] = {}
+					attrs.map(attr => {
+						if (attr.slice(0, 3) === '...') {
+							Object.assign(props, fields[iField++])
 						}
 						else {
-							if (prop == null) {
-								level[2][stringified] = true
-							}
-							else {
-								level[2][prop] = stringified
-								prop = null
-							}
+							let [name, value] = attr.split('=')
+							props[nameTpl(...evaluate(name))] = value ? valueTpl(...evaluate(value)) : true
 						}
-					}
+					})
 				}
+			}
 
-				if (str.substr(j, 2) === '/>') {
-					let node = h(...level.slice(1))
-					level = level[0]
-					level.push(node)
-					j++
-					mode = text
-				}
-				else if (curr === '>') {
-					mode = text
-				}
+			if (close) {
+				let node = h(...current.slice(1))
+				current = current[0]
+				current.push(node)
 			}
-			else {
-				buf += curr
-			}
+
+			buf = ''
+
+			evaluate(texts[iText++], current, current)
+			if (current.slice(-1)[0] === '') current.pop()
+		}
+		else {
+			buf += char
 		}
 	}
 
-	let mode = text, level = [], buf = '', curr, str, i, j, args = [[]], prop, quote
-
-	for (i = 0; i < statics.length; i++) {
-		str = statics[i]
-		j = -1
-		while (curr = str[++j]) mode()
-		curr = null
-		mode()
-	}
-
-	return level.length < 2 ? level[0] : level
+	delete current.raw
+	return current.length > 1 ? current : current[0]
 }
+
