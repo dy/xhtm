@@ -8,7 +8,7 @@ const h = (tag, props, ...children) => {
 }
 const html = htm.bind(h);
 
-t('base case', t => {
+t.only('base case', t => {
 	t.deepEqual(html`foo <a b>c${'d'}<e f=g />h</a>`, [
 		'foo ', { tag: 'a', props: { b: true }, children: ['c', 'd', { tag: 'e', props: { f: 'g' }, children: [] }, 'h'] }
 	])
@@ -24,16 +24,16 @@ t('plain text', t => {
 	t.deepEqual(html`${''}${''}`, ['', '', '', '', ''])
 	t.end()
 })
-t.only('tag cases', t => {
+t('tag cases', t => {
 	// special case: both self-closing empty tag and ending tag
 	// t.deepEqual(html`</>`, { tag: '', props: null, children: []})
 
 	// t.deepEqual(html`< />`, { tag: '', props: null, children: [] })
-	t.deepEqual(html`<></>`, { tag: '', props: null, children: [] })
+	// t.deepEqual(html`<></>`, { tag: '', props: null, children: [] })
 	// t.deepEqual(html`<a></>`, { tag: 'a', props: null, children: [] })
 	// t.deepEqual(html`<a></a>`, { tag: 'a', props: null, children: [] })
 	// t.deepEqual(html`<abc/>`, { tag: 'abc', props: null, children: [] })
-	// t.deepEqual(html`<abc />`, { tag: 'abc', props: null, children: [] })
+	t.deepEqual(html`<abc />`, { tag: 'abc', props: null, children: [] })
 	// t.deepEqual(html`<abc  />`, { tag: 'abc', props: null, children: [] })
 	// t.deepEqual(html`<abc></>`, { tag: 'abc', props: null, children: [] })
 	// t.deepEqual(html`<abc></abc>`, { tag: 'abc', props: null, children: [] })
