@@ -40,8 +40,8 @@ export default function (statics) {
 			}
 		}
 
-		current.push(text)
 		prev = idx + match.length
+		if (prev < str.length) current.push(text)
 	})
 
 	return current.length > 1 ? current : current[0]
