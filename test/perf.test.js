@@ -1,4 +1,4 @@
-import html from '../src/index.js';
+import {html} from './index.test.js';
 // import htm from '../dist/xhtm.modern.js';
 // import htm from 'htm/mini';
 // import htm from 'htm';

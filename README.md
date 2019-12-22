@@ -43,11 +43,10 @@ Because _htm_ is intended to be strictly [JSX-compatible](https://github.com/dev
 `xhtm` is by default compatible with `htm` and can be used as drop-in replacement.
 
 ```js
-import html from 'xhtm'
+import htm from 'xhtm'
 import { render, h } from 'preact'
 
-// .use instead of .bind
-html.use(h)
+html = htm.bind(h)
 
 render(html`
   <h1>Hello World!</h1>

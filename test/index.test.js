@@ -1,12 +1,12 @@
 import './htm.test.js'
 import './perf.test.js'
 import t from 'tst'
-import html from '../src/index.js'
+import htm from '../src/index.js'
 
 export const h = (tag, props, ...children) => {
 	return { tag, props, children }
 }
-html.use(h)
+export const html = htm.bind(h)
 
 t('base case', t => {
 	t.deepEqual(html`foo <a b >c${'d'}<e f=g/>h</a>`, [
