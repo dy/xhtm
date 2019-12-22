@@ -1,37 +1,49 @@
-const FIELD = '\ue000'
+const FIELD = '\ue000', QUOTES = '\ue001'
 
 export default function (statics) {
+	let prev = 0, current = [], field = 0, args, name, value, quotes = [], quote = 0
 	let h = this,
-		nameTpl = this.nameTpl || ((s, ...f) => {
-			if (!s[0] && f.length === 1 && !s[1]) return f[0]
-			return String.raw(s, ...f)
-		}),
-		valueTpl = this.valueTpl || nameTpl
-
-	let prev = 0, current = [], field = 0, args, name, value
+	evaluate = (str, fn = a => a || '', keepQuotes) => {
+		let i = 0
+		if (!str[1] && str[0] === FIELD) return fn(arguments[++field])
+		str = str.replace(/\ue001/g, m => keepQuotes ? quotes[quote++] : quotes[quote++].slice(1, -1) )
+		.replace(/\ue000/g, (match, idx, str) => {
+			if (idx) fn(str.slice(i, idx))
+			i = idx + 1
+			return fn(arguments[++field])
+		})
+		if (i < str.length) fn(str.slice(i))
+		return str
+	}
 
 	statics
 	.join(FIELD)
+	.replace(/('|")[^\1]*?\1/g, match => (quotes.push(match), QUOTES))
 	.replace(/\s+/g, ' ')
+	.replace(/<!--.*-->/g, '')
 	.replace(/(?:^|>)([^<]*)(?:$|<)/g, (match, text, idx, str) => {
 		if (idx) {
 			let close
-
-			str.slice(prev, idx).split(' ').map((part, i) => {
-				if (part[0] === '/') close = true
-				else if (!i) {
-					current = [current, part]
-				}
-				else {
-					let props = current[2] || (current[2] = {})
-					if (part.slice(0, 3) === '...') {
-						Object.assign(props, arguments[++field])
+			str.slice(prev, idx)
+				// <abc/> → <abc />
+				.replace(/(\S)\/$/, '$1 /')
+				.split(' ').map((part, i) => {
+					if (part[0] === '/') {
+						close = true
 					}
-					else {
-						[name, value] = part.split('=')
-						props[name] = value ? value : true
+					else if (!i) {
+						current = [current, evaluate(part), null]
 					}
-				}
+					else if (part) {
+						let props = current[2] || (current[2] = {})
+						if (part.slice(0, 3) === '...') {
+							Object.assign(props, arguments[++field])
+						}
+						else {
+							[name, value] = part.split('=')
+							props[evaluate(name)] = value ? evaluate(value) : true
+						}
+					}
 			})
 
 			if (close) {
@@ -39,9 +51,8 @@ export default function (statics) {
 				current.push(h(...args))
 			}
 		}
-
 		prev = idx + match.length
-		if (prev < str.length) current.push(text)
+		if (prev < str.length || !idx) evaluate(text, part => current.push(part), true)
 	})
 
 	return current.length > 1 ? current : current[0]
