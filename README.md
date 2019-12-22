@@ -7,9 +7,6 @@
   <a href="https://travis-ci.org/dy/xhtm"><img src="https://travis-ci.org/dy/xhtm.svg?branch=master" alt="npm"></a>
   <img src="https://img.shields.io/badge/stability-experimental-yellow"/>
 </p>
-<p align="center">
-  <img src="https://i.imgur.com/0ph8dbS.png" width="572" alt="hyperscript tagged markup demo">
-</p>
 
 `xhtm` is alternative implementation of `htm`, allowing extensions, like HTML/XML syntax, custom attribute/tag name interpolation, different spaces handling etc., while striving to keep performance and compactness.
 Because _htm_ is intended to be strictly [JSX-compatible](https://github.com/developit/htm/issues/91#issuecomment-498741042).
