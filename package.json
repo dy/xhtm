@@ -1,6 +1,6 @@
 {
   "name": "xhtm",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "HTML Tagged Template syntax for Virtual DOM. Extension of HTM with HTML support.",
   "main": "src/index.js",
   "module": "src/index.js",
