@@ -1,8 +1,7 @@
 import t from 'tst'
-import htm from '../src/index.js'
+import html from '../src/index.js'
+import {h} from './index.test.js'
 
-const h = (tag, props, ...children) => ({ tag, props, children });
-const html = htm.bind(h);
 
 t('empty', (t) => {
   t.deepEqual(html``, undefined);

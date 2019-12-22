@@ -3,7 +3,7 @@
   XHTM (eXtensible Hyperscript Tagged Markup)
 </h1>
 <p align="center">
-  <a href="https://www.npmjs.org/package/xhtm"><img src="https://img.shields.io/npm/v/htm.svg?style=flat" alt="npm"></a>
+  <a href="https://www.npmjs.org/package/xhtm"><img src="https://img.shields.io/npm/v/xhtm.svg?style=flat" alt="npm"></a>
   <a href="https://travis-ci.org/dy/xhtm"><img src="https://travis-ci.org/dy/xhtm.svg?branch=master" alt="npm"></a>
   <img src="https://img.shields.io/badge/stability-experimental-yellow"/>
 </p>
@@ -43,15 +43,15 @@ Because _htm_ is intended to be strictly [JSX-compatible](https://github.com/dev
 `xhtm` is by default compatible with `htm` and can be used as drop-in replacement.
 
 ```js
-import htm from 'xhtm'
+import html from 'xhtm'
 import { render, h } from 'preact'
 
-const html = htm.bind(h)
+// .use instead of .bind
+html.use(h)
 
 render(html`
-  <!doctype html>
   <h1>Hello World!</h1>
-  <p>Some paragraph<br>
+  <p>Some paragraph<br/></p>
   <p>Another paragraph</p>
 `, document.getElementById('app'))
 ```
