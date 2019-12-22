@@ -11,9 +11,10 @@
   <img src="https://i.imgur.com/0ph8dbS.png" width="572" alt="hyperscript tagged markup demo">
 </p>
 
-`xhtm` provides alternative implementation of `htm`, allowing extensions, like HTML/XML syntax, custom attribute/tag name interpolation, different spaces handling etc., while keeping htm performance and compactness.
+`xhtm` is alternative implementation of `htm`, allowing extensions, like HTML/XML syntax, custom attribute/tag name interpolation, different spaces handling etc., while striving to keep performance and compactness.
 Because _htm_ is intended to be strictly [JSX-compatible](https://github.com/developit/htm/issues/91#issuecomment-498741042).
 
+<!--
 ## Improvements over HTM
 
 * HTML syntax support.
@@ -29,22 +30,20 @@ Because _htm_ is intended to be strictly [JSX-compatible](https://github.com/dev
 * Smaller size.
 * Faster.
 
-<!-- * Parent reference for non-JSX template engines.-->
-
 ## Differences from HTM
 
 * No integrations exported.
 * No babel compilers available (temporarily).
 * Simplified tests runner.
 * Simplified significant part of source code.
-
+-->
 
 ## Installation & Usage
 
 
 [![NPM](https://nodei.co/npm/xhtm.png?mini=true)](https://nodei.co/npm/xhtm/)
 
-`xhtm` is by default compatible with `htm`, but supports HTML syntax, can be used as drop-in replacement.
+`xhtm` is by default compatible with `htm` and can be used as drop-in replacement.
 
 ```js
 import htm from 'xhtm'
@@ -56,24 +55,24 @@ render(html`
   <!doctype html>
   <h1>Hello World!</h1>
   <p>Some paragraph<br>
-  <p>Another paragraph
+  <p>Another paragraph</p>
 `, document.getElementById('app'))
 ```
 
-For bare-minimum `htm`-compatible version, `xhtm` provides `xhtm/htm` entry.
+<!-- For bare-minimum `htm`-compatible version, `xhtm` provides `xhtm/htm` entry. -->
 
 For `htm` manual, refer to [htm docs](https://ghub.io/htm).
 
 ## Comparison
 
-|                             | htm       | xhtm/functional | xhtm/indexof  | domtagger | hyperx   | common-tags |
+|                             | htm       | xhtm            | domtagger | hyperx   | common-tags |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Size                        | 672b      | 651b            | 736b          |  1186b    | 1949b    | 1242b       |
-| Performance: creation       | 88,111/s  | 30,000/s        | 32,000/s ^60k |  7,604/s  | 58,961/s | 172,692/s   |
-| Performance: usage          | 617,870/s | 30,000/s        | 180k/s        |  16,577/s | 60,888/s | 22,344/s    |
-| HTML Support                | -         |                 |               |           |          |             |
-| JSX Support                 | +         |                 |               |           |          |             |
-| Output Format               | h         |                 |               |           |          |             |
-| Static Compiler             | +         |                 |               |           |          |             |
+| Size                        | 672b      | 512b            |  1186b    | 1949b    | 1242b       |
+| Performance: creation       | 88,111/s  | 30,000/s        |  7,604/s  | 58,961/s | 172,692/s   |
+| Performance: usage          | 617,870/s | 30,000/s        |  16,577/s | 60,888/s | 22,344/s    |
+| HTML Support                | -         | ~               |           |          |             |
+| JSX Support                 | +         | +               |           |          |             |
+| Output Format               | h         | h               |           |          |             |
+| Static Compiler             | +         | -               |           |          |             |
 
 <p align="right">HK</p>

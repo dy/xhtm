@@ -1,4 +1,4 @@
-import t from 'tape'
+import t from 'tst'
 import htm from '../src/index.js'
 
 const h = (tag, props, ...children) => ({ tag, props, children });

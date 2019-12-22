@@ -1,6 +1,6 @@
 import './htm.test.js'
 import './perf.test.js'
-import t from 'tape'
+import t from 'tst'
 import htm from '../src/index.js'
 
 const h = (tag, props, ...children) => {
