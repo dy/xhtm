@@ -63,7 +63,7 @@ For `htm` manual, refer to [htm docs](https://ghub.io/htm).
 ## Comparison
 
 |                             | htm       | xhtm            | domtagger | hyperx   | common-tags |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
+|---|:---:|:---:|:---:|:---:|:---:|
 | Size                        | 672b      | 512b            |  1186b    | 1949b    | 1242b       |
 | Performance: creation       | 88,111/s  | 30,000/s        |  7,604/s  | 58,961/s | 172,692/s   |
 | Performance: usage          | 617,870/s | 30,000/s        |  16,577/s | 60,888/s | 22,344/s    |
