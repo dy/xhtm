@@ -1,8 +1,9 @@
 const FIELD = '\ue000', QUOTES = '\ue001'
 
 export default function htm (statics) {
-  let h = this, prev = 0, current = [], field = 0, args, name, value, quotes = [], quote = 0,
-  evaluate = (str, fn = a => a || '', keepQuotes) => {
+  let h = this, prev = 0, current = [], field = 0, args, name, value, quotes = [], quote = 0
+
+  const evaluate = (str, fn = a => a || '', keepQuotes) => {
     let i = 0
     if (!str[1] && str[0] === FIELD) return fn(arguments[++field])
     str = str.replace(/\ue001/g, m => keepQuotes ? quotes[quote++] : quotes[quote++].slice(1, -1))
@@ -20,6 +21,8 @@ export default function htm (statics) {
     .replace(/('|")[^\1]*?\1/g, match => (quotes.push(match), QUOTES))
     .replace(/\s+/g, ' ')
     .replace(/<!--.*-->/g, '')
+
+    // ...>text<... sequence
     .replace(/(?:^|>)([^<]*)(?:$|<)/g, (match, text, idx, str) => {
       if (idx) {
         let close
