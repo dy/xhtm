@@ -7,7 +7,7 @@
 <img src="https://img.shields.io/badge/stability-stable-green" alt="stability"/>
 </p>
 
-`xhtm` is alternative implementation of `htm` without `htm`-specific limitations.
+_XHTM_ is alternative implementation of [HTM](https://ghub.io/htm) without HTM-specific limitations.
 
 Low-level machinery is rejected in favor of readable high-level js.
 The code is 5 times shorter (just 60 LOC), minified it is ~20% smaller, but parsing is ~2.5 times slower. It better handles edge cases / errors and provides extensibility.
