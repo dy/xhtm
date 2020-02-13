@@ -1,15 +1,21 @@
 
 <h1 align="center">
-  XHTM (eXtensible Hyperscript Tagged Markup)
+  XHTM − eXtensible Hyperscript Tagged Markup
 </h1>
+
 <p align="center">
-  <a href="https://www.npmjs.org/package/xhtm"><img src="https://img.shields.io/npm/v/xhtm.svg?style=flat" alt="npm"></a>
-  <a href="https://travis-ci.org/dy/xhtm"><img src="https://travis-ci.org/dy/xhtm.svg?branch=master" alt="npm"></a>
-  <img src="https://img.shields.io/badge/stability-experimental-yellow"/>
+  <a href="https://travis-ci.org/dy/xhtm"><img src="https://travis-ci.org/dy/xhtm.svg?branch=master" alt="travis"></a>
+  <a href="https://bundlephobia.com/result?p=xhtm"><img alt="size" src="https://img.shields.io/bundlephobia/minzip/xhtm?label=size"></a>
+  <a href="https://npmjs.org/package/xhtm"><img alt="version" src="https://img.shields.io/npm/v/xhtm"></a>
+  <img src="https://img.shields.io/badge/stability-stable-green" alt="stability"/>
 </p>
 
-`xhtm` is alternative implementation of `htm`, allowing extensions, like HTML/XML syntax, custom attribute/tag name interpolation, different spaces handling etc., while striving to keep performance and compactness.
-Because _htm_ is intended to be strictly [JSX-compatible](https://github.com/developit/htm/issues/91#issuecomment-498741042).
+`xhtm` is alternative implementation of `htm` without `htm`-specific limitations.
+
+Low-level machinery is rejected in favor of readable high-level js.
+The code is 5 times shorter (just 60 LOC), minified it is ~20% smaller, but parsing is ~2.5 times slower. It better handles edge cases / errors and provides extensibility.
+
+Originally that was just state of art implementation (best from 10 variants in R&D branches), but turned out it has ideal qualities for [spect/html](https://ghub.io/spect) - minimally possible size, no need for cache, single-time run, more complete syntax support, extensibility.
 
 <!--
 ## Improvements over HTM
@@ -25,7 +31,7 @@ Because _htm_ is intended to be strictly [JSX-compatible](https://github.com/dev
 * Customizable template parts.
 * Simple validation.
 * Smaller size.
-* Faster.
+* ~~Faster.~~
 
 ## Differences from HTM
 
@@ -55,10 +61,10 @@ render(html`
 `, document.getElementById('app'))
 ```
 
-<!-- For bare-minimum `htm`-compatible version, `xhtm` provides `xhtm/htm` entry. -->
-
 For `htm` manual, refer to [htm docs](https://ghub.io/htm).
 
+
+<!--
 ## Comparison
 
 |                             | htm       | xhtm            | domtagger | hyperx   | common-tags |
@@ -70,5 +76,6 @@ For `htm` manual, refer to [htm docs](https://ghub.io/htm).
 | JSX Support                 | +         | +               |           |          |             |
 | Output Format               | h         | h               |           |          |             |
 | Static Compiler             | +         | -               |           |          |             |
+-->
 
 <p align="right">HK</p>

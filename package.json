@@ -1,9 +1,9 @@
 {
   "name": "xhtm",
   "version": "1.1.0",
-  "description": "HTML Tagged Template syntax for Virtual DOM. Extension of HTM with HTML support.",
+  "description": "Extensible HTM",
   "main": "src/index.js",
-  "module": "src/index.js",
+  "module": "src/index.modern.js",
   "source": "src/index.js",
   "scripts": {
     "start": "parcel serve --no-hmr test/index.html",
@@ -34,15 +34,9 @@
   "devDependencies": {
     "@babel/preset-env": "^7.7.7",
     "@babel/preset-modules": "^0.1.2",
-    "common-tags": "^1.8.0",
-    "domtagger": "^0.5.11",
     "esm": "^3.2.25",
     "htm": "^2.2.1",
-    "html-template-string": "^1.2.6",
-    "hyperx": "^2.5.4",
-    "lit-html": "^1.1.2",
     "microbundle": "^0.12.0-next.6",
-    "nanohtml": "^1.9.0",
     "performance-now": "^2.1.0",
     "tst": "^5.3.3"
   },
