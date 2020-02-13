@@ -1,13 +1,10 @@
+# XHTM − eXtensible Hyperscript Tagged Markup
 
-<h1 align="center">
-  XHTM − eXtensible Hyperscript Tagged Markup
-</h1>
-
-<p align="center">
-  <a href="https://travis-ci.org/dy/xhtm"><img src="https://travis-ci.org/dy/xhtm.svg?branch=master" alt="travis"></a>
-  <a href="https://bundlephobia.com/result?p=xhtm"><img alt="size" src="https://img.shields.io/bundlephobia/minzip/xhtm?label=size"></a>
-  <a href="https://npmjs.org/package/xhtm"><img alt="version" src="https://img.shields.io/npm/v/xhtm"></a>
-  <img src="https://img.shields.io/badge/stability-stable-green" alt="stability"/>
+<p>
+<a href="https://travis-ci.org/dy/xhtm"><img src="https://travis-ci.org/dy/xhtm.svg?branch=master" alt="travis"></a>
+<a href="https://bundlephobia.com/result?p=xhtm"><img alt="size" src="https://img.shields.io/bundlephobia/minzip/xhtm?label=size"></a>
+<a href="https://npmjs.org/package/xhtm"><img alt="version" src="https://img.shields.io/npm/v/xhtm"></a>
+<img src="https://img.shields.io/badge/stability-stable-green" alt="stability"/>
 </p>
 
 `xhtm` is alternative implementation of `htm` without `htm`-specific limitations.
