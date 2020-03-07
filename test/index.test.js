@@ -1,7 +1,7 @@
 import './htm.test.js'
 import './perf.test.js'
 import t from 'tst'
-import htm from '../src/index.modern.js'
+import htm from '../src/index.js'
 
 export const h = (tag, props, ...children) => {
 	return { tag, props, children }
@@ -74,10 +74,10 @@ t.skip('malformed html', t => {
 	t.end()
 })
 
-t('ignore false value', t => {
+t('ignore null values', t => {
 	t.deepEqual(
 		html`<div str="${false} ${null} ${undefined}" />`,
-		{ tag: 'div', props: { str: "  " }, children: [] }
+		{ tag: 'div', props: { str: "false  " }, children: [] }
 	);
 
 	t.end()

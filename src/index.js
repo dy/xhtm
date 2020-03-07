@@ -3,17 +3,16 @@ const FIELD = '\ue000', QUOTES = '\ue001'
 export default function htm (statics) {
   let h = this, prev = 0, current = [], field = 0, args, name, value, quotes = [], quote = 0
 
-  const evaluate = (str, fn = a => a || '', keepQuotes) => {
-    let i = 0
-    if (!str[1] && str[0] === FIELD) return fn(arguments[++field])
-    str = str.replace(/\ue001/g, m => keepQuotes ? quotes[quote++] : quotes[quote++].slice(1, -1))
-      .replace(/\ue000/g, (match, idx, str) => {
-        if (idx) fn(str.slice(i, idx))
-        i = idx + 1
-        return fn(arguments[++field])
-      })
-    if (i < str.length) fn(str.slice(i))
-    return str
+  const evaluate = (str, parts = [], raw, i = 0) => {
+    str = str.replace(/\ue001/g, m => raw ? quotes[quote++] : quotes[quote++].slice(1, -1))
+    if (!str) return str
+    str.replace(/\ue000/g, (match, idx) => {
+      if (idx) parts.push(str.slice(i, idx))
+      i = idx + 1
+      return parts.push(arguments[++field])
+    })
+    if (i < str.length) parts.push(str.slice(i))
+    return parts.length > 1 ? parts.join('') : parts[0]
   }
 
   statics
@@ -24,8 +23,8 @@ export default function htm (statics) {
 
     // ...>text<... sequence
     .replace(/(?:^|>)([^<]*)(?:$|<)/g, (match, text, idx, str) => {
+      let close
       if (idx) {
-        let close
         str.slice(prev, idx)
           // <abc/> → <abc />
           .replace(/(\S)\/$/, '$1 /')
@@ -48,13 +47,13 @@ export default function htm (statics) {
             }
           })
 
-        if (close) {
-          [current, ...args] = current
-          current.push(h(...args))
-        }
+      }
+      if (close) {
+        [current, ...args] = current
+        current.push(h(...args))
       }
       prev = idx + match.length
-      if (prev < str.length || !idx) evaluate(text, part => current.push(part), true)
+      if (prev < str.length || !idx) evaluate(text, current, true)
     })
 
   return current.length > 1 ? current : current[0]

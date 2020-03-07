@@ -1,4 +1,4 @@
-# XHTM − eXtensible Hyperscript Tagged Markup
+# XHTM − smallest html parser
 
 <p>
 <a href="https://travis-ci.org/dy/xhtm"><img src="https://travis-ci.org/dy/xhtm.svg?branch=master" alt="travis"></a>
@@ -12,7 +12,7 @@ _XHTM_ is alternative implementation of [HTM](https://ghub.io/htm) without HTM-s
 Low-level machinery is rejected in favor of readable high-level js.
 The code is 5 times shorter (just 60 LOC), minified it is ~20% smaller, but parsing is ~2.5 times slower. It better handles edge cases / errors and provides extensibility.
 
-Originally that was just state of art implementation (best from 10 variants in R&D branches), but turned out it has ideal qualities for [spect/html](https://ghub.io/spect) - minimally possible size, no need for cache, single-time run, more complete syntax support, extensibility.
+Originally that was just state of art implementation (best from 10 variants in R&D branches), but turned out it has ideal qualities for [spect/html](https://ghub.io/spect) - minimally possible size, no cache, single-time run, more complete syntax support, extensibility.
 
 <!--
 ## Improvements over HTM
@@ -75,4 +75,4 @@ For `htm` manual, refer to [htm docs](https://ghub.io/htm).
 | Static Compiler             | +         | -               |           |          |             |
 -->
 
-<p align="right">HK</p>
+<p align="center">🕉️</p>
