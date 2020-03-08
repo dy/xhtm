@@ -8,10 +8,9 @@
 </p>
 
 _XHTM_ is alternative implementation of [HTM](https://ghub.io/htm) without HTM-specific limitations.
-Low-level HTM machinery is rejected in favor of readable high-level js.
-It is, probably, smallest existing HTML parser − just 60LOC.
+Low-level HTM machinery is rejected in favor of readable high-level js and better HTML support.
 
-Originally that was just state of art implementation (best from 10 variants in R&D branches), but turned out it has ideal qualities for [spect/html](https://ghub.io/spect) - tiny size, no cache, single-time run, better syntax support, extensibility.
+Originally that was just state of art HTML parser implementation ( ~60LOC, best from 10 variants in R&D branches), but turned out it has ideal qualities for [spect/html](https://ghub.io/spect) - tiny size, no cache, single-time run, better syntax support, extensibility.
 
 ## Differences from HTM
 
@@ -27,7 +26,6 @@ Originally that was just state of art implementation (best from 10 variants in R
 * Optionally closed tags support [#91](https://github.com/developit/htm/issues/91).
 * Spaces are compatible with HTML (customizable) [#128](https://github.com/developit/htm/issues/128).
 * Escaping quotes [#96](https://github.com/developit/htm/issues/96).
-
 -->
 
 ## Installation & Usage
