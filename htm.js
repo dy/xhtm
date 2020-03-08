@@ -5,8 +5,9 @@ export default function htm (statics) {
 
   const evaluate = (str, parts = [], raw) => {
     let i = 0
-    if (!raw && str === QUOTES) str = quotes[quote++].slice(1,-1)
-    else str = str.replace(/\ue001/g, m => quotes[quote++])
+    str = !raw && str === QUOTES ?
+      quotes[quote++].slice(1,-1) :
+      str.replace(/\ue001/g, m => quotes[quote++])
 
     if (!str) return str
     str.replace(/\ue000/g, (match, idx) => {
@@ -15,7 +16,7 @@ export default function htm (statics) {
       return parts.push(arguments[++field])
     })
     if (i < str.length) parts.push(str.slice(i))
-    return parts.length > 1 ? htm.tpl(parts) : parts[0]
+    return parts.length > 1 ? parts : parts[0]
   }
 
   statics
@@ -66,6 +67,3 @@ export default function htm (statics) {
 
 // self-closing elements
 htm.void = {}
-
-// interpolation
-htm.tpl = parts => parts.join('')

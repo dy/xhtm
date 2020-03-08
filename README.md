@@ -16,7 +16,7 @@ Originally that was just state of art HTML parser implementation ( ~60LOC, best 
 
 * Self-closing tags support `` htm`<input><br>` `` → `[h('input'), h('br')]` (customizable via `htm.void`).
 * HTML directives `<!doctype>`, `<?xml?>` etc. support [#91](https://github.com/developit/htm/issues/91).
-* Interpolation `` html`<a class="a ${b} c"/>` `` → `h('a', { class: ['a ', b, ' c'] })` (customizable via `htm.tpl`).
+* Interpolated props are exposed as arrays `` html`<a class="a ${b} c"/>` `` → `h('a', { class: ['a ', b, ' c'] })`.
 * Calculated tag names [#109](https://github.com/developit/htm/issues/109).
 * Ignoring null-like arguments (customizable) [#129](https://github.com/developit/htm/issues/129).
 * No integrations exported, no babel compilers.
