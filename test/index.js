@@ -1,5 +1,7 @@
 import './htm.js'
 import './perf.js'
+import './html.js'
+
 import t from 'tst'
 import htm from '../index.js'
 
