@@ -1,5 +1,5 @@
 import t from 'tst'
-import {h, html} from './index.test.js'
+import {h, html} from './index.js'
 
 
 t('empty', (t) => {

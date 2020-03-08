@@ -19,10 +19,10 @@ const selfClosing = [
   '!',
   '?'
 ]
-const optionalEnd = {
-  'li': 'li',
-  'dt': ['dt'],
-  'dd',
-  'p',
-  ''
-}
+// const optionalEnd = {
+//   'li': 'li',
+//   'dt': ['dt'],
+//   'dd',
+//   'p',
+//   ''
+// }

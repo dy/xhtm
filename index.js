@@ -3,7 +3,8 @@ const FIELD = '\ue000', QUOTES = '\ue001'
 export default function htm (statics) {
   let h = this, prev = 0, current = [], field = 0, args, name, value, quotes = [], quote = 0
 
-  const evaluate = (str, parts = [], raw, i = 0) => {
+  const evaluate = (str, parts = [], raw) => {
+    let i = 0
     str = str.replace(/\ue001/g, m => raw ? quotes[quote++] : quotes[quote++].slice(1, -1))
     if (!str) return str
     str.replace(/\ue000/g, (match, idx) => {
@@ -23,7 +24,7 @@ export default function htm (statics) {
 
     // ...>text<... sequence
     .replace(/(?:^|>)([^<]*)(?:$|<)/g, (match, text, idx, str) => {
-      let close
+      let close, tag
       if (idx) {
         str.slice(prev, idx)
           // <abc/> → <abc />
@@ -34,6 +35,7 @@ export default function htm (statics) {
             }
             else if (!i) {
               current = [current, evaluate(part), null]
+              // if (selfClosing[tag]) close = true
             }
             else if (part) {
               let props = current[2] || (current[2] = {})

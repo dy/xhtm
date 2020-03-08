@@ -2,12 +2,12 @@
   "name": "xhtm",
   "version": "1.1.1",
   "description": "Extensible HTM",
-  "main": "src/index.js",
-  "module": "src/index.modern.js",
-  "source": "src/index.js",
+  "main": "index.js",
+  "module": "index.modern.js",
+  "source": "index.js",
   "scripts": {
     "start": "parcel serve --no-hmr test/index.html",
-    "test": "node -r esm test/index.test.js",
+    "test": "node -r esm test/index.js",
     "start:bench": "parcel serve --no-hmr test/bench.html",
     "build": "microbundle build --no-sourcemap -f modern --target web"
   },

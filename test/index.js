@@ -1,7 +1,7 @@
-import './htm.test.js'
-import './perf.test.js'
+import './htm.js'
+import './perf.js'
 import t from 'tst'
-import htm from '../src/index.js'
+import htm from '../index.js'
 
 export const h = (tag, props, ...children) => {
 	return { tag, props, children }

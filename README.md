@@ -1,4 +1,4 @@
-# XHTM − smallest html parser
+# XHTM − extensible htm tagged markup
 
 <p>
 <a href="https://travis-ci.org/dy/xhtm"><img src="https://travis-ci.org/dy/xhtm.svg?branch=master" alt="travis"></a>
@@ -8,18 +8,21 @@
 </p>
 
 _XHTM_ is alternative implementation of [HTM](https://ghub.io/htm) without HTM-specific limitations.
+Low-level HTM machinery is rejected in favor of readable high-level js.
+It is, probably, smallest existing HTML parser − just 60LOC.
 
-Low-level machinery is rejected in favor of readable high-level js.
-The code is 5 times shorter (just 60 LOC), minified it is ~20% smaller, but parsing is ~2.5 times slower. It better handles edge cases / errors and provides extensibility.
+Originally that was just state of art implementation (best from 10 variants in R&D branches), but turned out it has ideal qualities for [spect/html](https://ghub.io/spect) - tiny size, no cache, single-time run, better syntax support, extensibility.
 
-Originally that was just state of art implementation (best from 10 variants in R&D branches), but turned out it has ideal qualities for [spect/html](https://ghub.io/spect) - minimally possible size, no cache, single-time run, more complete syntax support, extensibility.
+## Differences with HTM
+
+* Multipart props returned as arrays, not as string `` html`<a class="a ${b} c"/>` `` ⇒ `h('a', { class: ['a ', b, ' c'] })`
+* Self-closing tags support, customizable `<input><br>` ⇒ `h('input')`.
+* HTML directives support [#91](https://github.com/developit/htm/issues/91).
+* No integrations exported, no babel compilers available (temporarily).
 
 <!--
-## Improvements over HTM
-
 * HTML syntax support.
 * Optionally closed tags support [#91](https://github.com/developit/htm/issues/91).
-* HTML directives support [#91](https://github.com/developit/htm/issues/91).
 * Dynamic attribute names [#124](https://github.com/developit/htm/issues/124).
 * Calculated tag names [#109](https://github.com/developit/htm/issues/109).
 * Ignoring null-like arguments (customizable) [#129](https://github.com/developit/htm/issues/129).
@@ -32,10 +35,6 @@ Originally that was just state of art implementation (best from 10 variants in R
 
 ## Differences from HTM
 
-* No integrations exported.
-* No babel compilers available (temporarily).
-* Simplified tests runner.
-* Simplified significant part of source code.
 -->
 
 ## Installation & Usage
