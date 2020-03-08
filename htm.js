@@ -5,7 +5,9 @@ export default function htm (statics) {
 
   const evaluate = (str, parts = [], raw) => {
     let i = 0
-    str = str.replace(/\ue001/g, m => raw ? quotes[quote++] : quotes[quote++].slice(1, -1))
+    if (!raw && str === QUOTES) str = quotes[quote++].slice(1,-1)
+    else str = str.replace(/\ue001/g, m => quotes[quote++])
+
     if (!str) return str
     str.replace(/\ue000/g, (match, idx) => {
       if (idx) parts.push(str.slice(i, idx))
@@ -13,7 +15,7 @@ export default function htm (statics) {
       return parts.push(arguments[++field])
     })
     if (i < str.length) parts.push(str.slice(i))
-    return parts.length > 1 ? parts.join('') : parts[0]
+    return parts.length > 1 ? parts : parts[0]
   }
 
   statics
@@ -21,6 +23,7 @@ export default function htm (statics) {
     .replace(/('|")[^\1]*?\1/g, match => (quotes.push(match), QUOTES))
     .replace(/\s+/g, ' ')
     .replace(/<!--.*-->/g, '')
+    .replace(/<!\[CDATA\[.*\]\]>/g, '')
 
     // ...>text<... sequence
     .replace(/(?:^|>)([^<]*)(?:$|<)/g, (match, text, idx, str) => {
