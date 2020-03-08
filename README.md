@@ -14,13 +14,13 @@ Originally that was just state of art HTML parser implementation ( ~60LOC, best 
 
 ## Differences from HTM
 
-* Self-closing tags support `` htm`<input><br>` `` ⇒ `[h('input'), h('br')]`, customizable via `htm.void`.
+* Self-closing tags support `` htm`<input><br>` `` → `[h('input'), h('br')]` (customizable via `htm.void`).
 * HTML directives `<!doctype>`, `<?xml?>` etc. support [#91](https://github.com/developit/htm/issues/91).
-* Customizable interpolation `` html`<a class="a ${b} c"/>` `` ⇒ `h('a', { class: ['a ', b, ' c'] })` via `htm.tpl`.
+* Interpolation `` html`<a class="a ${b} c"/>` `` → `h('a', { class: ['a ', b, ' c'] })` (customizable via `htm.tpl`).
 * Calculated tag names [#109](https://github.com/developit/htm/issues/109).
 * Dynamic attribute names [#124](https://github.com/developit/htm/issues/124).
 * Ignoring null-like arguments (customizable) [#129](https://github.com/developit/htm/issues/129).
-* No integrations exported, no babel compilers available (temporarily).
+* No integrations exported, no babel compilers.
 
 <!--
 * Optionally closed tags support [#91](https://github.com/developit/htm/issues/91).
