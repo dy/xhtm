@@ -8,7 +8,7 @@
 </p>
 
 _XHTM_ is alternative implementation of [HTM](https://ghub.io/htm) without HTM-specific limitations.
-Low-level HTM machinery is rejected in favor of readable high-level js and better HTML support.
+Low-level machinery is rejected in favor of readable high-level js and better HTML support.
 
 Originally that was just state of art HTML parser implementation ( ~60LOC, best from 10 variants in R&D branches), but turned out it has ideal qualities for [spect/html](https://ghub.io/spect) - tiny size, no cache, single-time run, better syntax support, extensibility.
 
