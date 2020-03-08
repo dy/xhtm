@@ -3,16 +3,19 @@
   "version": "1.2.0",
   "description": "Extensible HTM",
   "main": "index.js",
-  "module": "index.modern.js",
+  "module": "index.min.js",
   "source": "index.js",
   "scripts": {
     "start": "parcel serve --no-hmr test/index.html",
     "test": "node -r esm test/index.js",
     "start:bench": "parcel serve --no-hmr test/bench.html",
-    "build": "microbundle build --no-sourcemap -f modern --target web"
+    "build": "microbundle build --no-sourcemap -f modern --target web && shx mv index.modern.js index.min.js"
   },
   "files": [
-    "src"
+    "index.js",
+    "htm.js",
+    "index.min.js",
+    "index.d.ts"
   ],
   "repository": "dy/xhtm",
   "keywords": [
@@ -38,6 +41,7 @@
     "htm": "^2.2.1",
     "microbundle": "^0.12.0-next.6",
     "performance-now": "^2.1.0",
+    "shx": "^0.3.2",
     "tst": "^5.3.3"
   },
   "dependencies": {}
