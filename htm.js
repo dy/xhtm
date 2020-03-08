@@ -15,7 +15,7 @@ export default function htm (statics) {
       return parts.push(arguments[++field])
     })
     if (i < str.length) parts.push(str.slice(i))
-    return parts.length > 1 ? parts : parts[0]
+    return parts.length > 1 ? htm.tpl(parts) : parts[0]
   }
 
   statics
@@ -66,3 +66,6 @@ export default function htm (statics) {
 
 // self-closing elements
 htm.void = {}
+
+// interpolation
+htm.tpl = parts => parts.join('')

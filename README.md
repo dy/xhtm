@@ -1,4 +1,4 @@
-# XHTM − extensible htm tagged markup
+# XHTM − eXtensible HTM Tagged Markup
 
 <p>
 <a href="https://travis-ci.org/dy/xhtm"><img src="https://travis-ci.org/dy/xhtm.svg?branch=master" alt="travis"></a>
@@ -13,27 +13,20 @@ It is, probably, smallest existing HTML parser − just 60LOC.
 
 Originally that was just state of art implementation (best from 10 variants in R&D branches), but turned out it has ideal qualities for [spect/html](https://ghub.io/spect) - tiny size, no cache, single-time run, better syntax support, extensibility.
 
-## Differences with HTM
+## Differences from HTM
 
-* Multipart props returned as arrays, not as string `` html`<a class="a ${b} c"/>` `` ⇒ `h('a', { class: ['a ', b, ' c'] })`
-* Self-closing tags support, customizable `<input><br>` ⇒ `h('input')`.
-* HTML directives support [#91](https://github.com/developit/htm/issues/91).
+* Self-closing tags support `` htm`<input><br>` `` ⇒ `[h('input'), h('br')]`, customizable via `htm.void`.
+* HTML directives `<!doctype>`, `<?xml?>` etc. support [#91](https://github.com/developit/htm/issues/91).
+* Customizable interpolation `` html`<a class="a ${b} c"/>` `` ⇒ `h('a', { class: ['a ', b, ' c'] })` via `htm.tpl`.
+* Calculated tag names [#109](https://github.com/developit/htm/issues/109).
+* Dynamic attribute names [#124](https://github.com/developit/htm/issues/124).
+* Ignoring null-like arguments (customizable) [#129](https://github.com/developit/htm/issues/129).
 * No integrations exported, no babel compilers available (temporarily).
 
 <!--
-* HTML syntax support.
 * Optionally closed tags support [#91](https://github.com/developit/htm/issues/91).
-* Dynamic attribute names [#124](https://github.com/developit/htm/issues/124).
-* Calculated tag names [#109](https://github.com/developit/htm/issues/109).
-* Ignoring null-like arguments (customizable) [#129](https://github.com/developit/htm/issues/129).
 * Spaces are compatible with HTML (customizable) [#128](https://github.com/developit/htm/issues/128).
 * Escaping quotes [#96](https://github.com/developit/htm/issues/96).
-* Customizable template parts.
-* Simple validation.
-* Smaller size.
-* ~~Faster.~~
-
-## Differences from HTM
 
 -->
 
