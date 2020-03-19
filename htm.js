@@ -59,7 +59,7 @@ export default function htm (statics) {
         current.push(h(...args))
       }
       prev = idx + match.length
-      if (prev < str.length || !idx) evaluate(text, current, true)
+      if (text) evaluate(text, current, true)
     })
 
   return current.length > 1 ? current : current[0]

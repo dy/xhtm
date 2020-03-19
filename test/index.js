@@ -4,6 +4,7 @@ import './html.js'
 
 import t from 'tst'
 import htm from '../index.js'
+// import htm from '../index.js'
 
 export const h = (tag, props, ...children) => {
 	if (Array.isArray(tag)) tag = tag.join('')
@@ -85,6 +86,14 @@ t('ignore null values', t => {
 	);
 
 	t.end()
+})
+
+t('after tags', t => {
+	t.is(html`<x/> 1`, [{tag:'x', props: null, children: []}, ' 1'])
+	t.is(html`<x/>${1}`, [{tag:'x', props: null, children: []}, 1])
+	t.is(html`1<x/>`, ['1', {tag:'x', props: null, children: []}])
+	t.is(html`${1}<x/>`, [1, {tag:'x', props: null, children: []}])
+	t.is(html`${1}<x/>${1}`, [1, {tag:'x', props: null, children: []}, 1])
 })
 
 
