@@ -43,14 +43,14 @@ export default function htm (statics) {
           .replace(/(\S)\/$/, '$1 /')
           .split(' ').map((part, i) => {
             if (part[0] === '/') {
-              close = part.slice(1) || 1
+              close = tag || part.slice(1) || 1
             }
             else if (!i) {
               tag = evaluate(part)
               // <p>abc<p>def, <tr><td>x<tr>
               while (htm.close[current[1]+tag]) up()
               current = [current, tag, null]
-              if (htm.empty[tag]) close = 2
+              if (htm.empty[tag]) close = tag
             }
             else if (part) {
               let props = current[2] || (current[2] = {})
@@ -67,7 +67,7 @@ export default function htm (statics) {
       if (close) {
         up()
         // if last child is closable - close it too
-        while (!current.root && last !== close && htm.close[last]) up()
+        while (last !== close && htm.close[last]) up()
       }
       prev = idx + match.length
 
