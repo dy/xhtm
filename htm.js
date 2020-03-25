@@ -28,14 +28,14 @@ export default function htm (statics) {
 
   statics
     .join(FIELD)
+    .replace(/<!--[^]*-->/g, '')
+    .replace(/<!\[CDATA\[[^]*\]\]>/g, '')
     .replace(/('|")[^\1]*?\1/g, match => (quotes.push(match), QUOTES))
-    .replace(/\s+/g, ' ')
-    .replace(/<!--.*-->/g, '')
-    .replace(/<!\[CDATA\[.*\]\]>/g, '')
     // .replace(/^\s*\n\s*|\s*\n\s*$/g,'')
+    .replace(/\s+/g, ' ')
 
     // ...>text<... sequence
-    .replace(/(?:^|>)\s*([^<]*)\s*(?:$|<)/g, (match, text, idx, str) => {
+    .replace(/(?:^|>)([^<]*)(?:$|<)/g, (match, text, idx, str) => {
       let close, tag
       if (idx) {
         str.slice(prev, idx)
@@ -70,7 +70,8 @@ export default function htm (statics) {
         while (last !== close && htm.close[last]) up()
       }
       prev = idx + match.length
-      if (text) evaluate((last = 0, text), current, true)
+
+      if (text && text !== ' ') evaluate((last = 0, text), current, true)
     })
 
   if (!current.root) up()

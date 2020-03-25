@@ -4,7 +4,7 @@ import './html.js'
 
 import t from 'tst'
 import htm from '../index.js'
-// import htm from '../index.js'
+// import htm from 'htm'
 
 export const h = (tag, props, ...children) => {
 	if (Array.isArray(tag)) tag = tag.join('')
@@ -14,8 +14,8 @@ export const h = (tag, props, ...children) => {
 export const html = htm.bind(h)
 
 t('base case', t => {
-	t.deepEqual(html`foo <a b >c${'d'}<e f=g/>h</a>`, [
-		'foo ', { tag: 'a', props: { b: true }, children: ['c', 'd', { tag: 'e', props: { f: 'g' }, children: [] }, 'h'] }
+	t.deepEqual(html` foo <a b >c${'d'}<e f=g/>h </a>`, [
+		' foo ', { tag: 'a', props: { b: true }, children: ['c', 'd', { tag: 'e', props: { f: 'g' }, children: [] }, 'h '] }
 	])
 	t.end()
 })
@@ -89,7 +89,7 @@ t('ignore null values', t => {
 })
 
 t('after tags', t => {
-	t.is(html`<x/> 1`, [{tag:'x', props: null, children: []}, '1'])
+	t.is(html`<x/> 1`, [{tag:'x', props: null, children: []}, ' 1'])
 	t.is(html`<x/>${1}`, [{tag:'x', props: null, children: []}, 1])
 	t.is(html`1<x/>`, ['1', {tag:'x', props: null, children: []}])
 	t.is(html`${1}<x/>`, [1, {tag:'x', props: null, children: []}])
