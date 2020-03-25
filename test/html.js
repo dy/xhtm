@@ -143,6 +143,9 @@ t('optional/self-closing readme', t => {
   ])
 })
 
+t('html: tr case', t => {
+	t.is(html`<tr colspan=2/>`, {tag: 'tr', props: {colspan: '2'}, children: []})
+})
 
 t('html: directives', t => {
   t.is(html`<?xml version="1.0" encoding="UTF-8" ?>`, {tag:'?xml', props:{version:'1.0', encoding:'UTF-8', '?': true}, children:[]})

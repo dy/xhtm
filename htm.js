@@ -67,7 +67,7 @@ export default function htm (statics) {
       if (close) {
         up()
         // if last child is closable - close it too
-        while (last !== close && htm.close[last]) up()
+        while (!current.root && last !== close && htm.close[last]) up()
       }
       prev = idx + match.length
 
