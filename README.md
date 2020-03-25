@@ -14,7 +14,7 @@ Originally that was just state of art HTML parser implementation ( ~60LOC, best 
 
 ## Differences from HTM
 
-* Self-closing tags support `` htm`<input><br>` `` → `[h('input'), h('br')]` (customizable via `htm.void`).
+* Self-closing tags support `` htm`<input><br>` `` → `[h('input'), h('br')]` (customizable via `htm.empty`).
 * HTML directives `<!doctype>`, `<?xml?>` etc. support [#91](https://github.com/developit/htm/issues/91).
 * Optionally closed tags support `<p>foo<p>bar` → `<p>foo</p><p>bar</p>` [#91](https://github.com/developit/htm/issues/91).
 * Interpolated props are exposed as arrays `` html`<a class="a ${b} c"/>` `` → `h('a', { class: ['a ', b, ' c'] })`.
