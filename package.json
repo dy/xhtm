@@ -1,6 +1,6 @@
 {
   "name": "xhtm",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Extensible HTM",
   "main": "index.js",
   "module": "index.js",
