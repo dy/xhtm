@@ -16,6 +16,7 @@ Originally that was just state of art HTML parser implementation ( ~60LOC, best 
 
 * Self-closing tags support `` htm`<input><br>` `` → `[h('input'), h('br')]` (customizable via `htm.void`).
 * HTML directives `<!doctype>`, `<?xml?>` etc. support [#91](https://github.com/developit/htm/issues/91).
+* Optionally closed tags support `<p>foo<p>bar` → `<p>foo</p><p>bar</p>` [#91](https://github.com/developit/htm/issues/91).
 * Interpolated props are exposed as arrays `` html`<a class="a ${b} c"/>` `` → `h('a', { class: ['a ', b, ' c'] })`.
 * Calculated tag names [#109](https://github.com/developit/htm/issues/109).
 * Ignoring null-like arguments (customizable) [#129](https://github.com/developit/htm/issues/129).
@@ -23,7 +24,6 @@ Originally that was just state of art HTML parser implementation ( ~60LOC, best 
 
 <!--
 * Dynamic attribute names [#124](https://github.com/developit/htm/issues/124).
-* Optionally closed tags support [#91](https://github.com/developit/htm/issues/91).
 * Spaces are compatible with HTML (customizable) [#128](https://github.com/developit/htm/issues/128).
 * Escaping quotes [#96](https://github.com/developit/htm/issues/96).
 -->

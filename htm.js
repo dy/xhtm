@@ -1,7 +1,8 @@
 const FIELD = '\ue000', QUOTES = '\ue001'
 
 export default function htm (statics) {
-  let h = this, prev = 0, current = [], field = 0, args, name, value, quotes = [], quote = 0
+  let h = this, prev = 0, current = [], field = 0, args, name, value, quotes = [], quote = 0, last
+  current.root = true
 
   const evaluate = (str, parts = [], raw) => {
     let i = 0
@@ -19,15 +20,22 @@ export default function htm (statics) {
     return parts.length > 1 ? parts : parts[0]
   }
 
+  // close level
+  const up = () => {
+    [current, ...args] = current
+    current.push(h(...(last = args)))
+  }
+
   statics
     .join(FIELD)
     .replace(/('|")[^\1]*?\1/g, match => (quotes.push(match), QUOTES))
     .replace(/\s+/g, ' ')
     .replace(/<!--.*-->/g, '')
     .replace(/<!\[CDATA\[.*\]\]>/g, '')
+    // .replace(/^\s*\n\s*|\s*\n\s*$/g,'')
 
     // ...>text<... sequence
-    .replace(/(?:^|>)([^<]*)(?:$|<)/g, (match, text, idx, str) => {
+    .replace(/(?:^|>)\s*([^<]*)\s*(?:$|<)/g, (match, text, idx, str) => {
       let close, tag
       if (idx) {
         str.slice(prev, idx)
@@ -38,8 +46,11 @@ export default function htm (statics) {
               close = true
             }
             else if (!i) {
-              current = [current, tag = evaluate(part), null]
-              if (htm.void[tag]) close = true
+              tag = evaluate(part)
+              // <p>abc<p>def, <tr><td>x<tr>
+              while (htm.close[[current[1], tag]]) up()
+              current = [current, tag, null]
+              if (htm.empty[tag]) close = 1
             }
             else if (part) {
               let props = current[2] || (current[2] = {})
@@ -52,18 +63,23 @@ export default function htm (statics) {
               }
             }
           })
-
       }
       if (close) {
-        [current, ...args] = current
-        current.push(h(...args))
+        up()
+        // if last child is closable - close it too
+        while (!current.root && last && htm.close[last[0]]) up()
       }
       prev = idx + match.length
-      if (text) evaluate(text, current, true)
+      if (text) evaluate((last = 0, text), current, true)
     })
+
+  if (!current.root) up()
 
   return current.length > 1 ? current : current[0]
 }
 
 // self-closing elements
-htm.void = {}
+htm.empty = {}
+
+// optional closing elements
+htm.close = {}

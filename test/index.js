@@ -89,7 +89,7 @@ t('ignore null values', t => {
 })
 
 t('after tags', t => {
-	t.is(html`<x/> 1`, [{tag:'x', props: null, children: []}, ' 1'])
+	t.is(html`<x/> 1`, [{tag:'x', props: null, children: []}, '1'])
 	t.is(html`<x/>${1}`, [{tag:'x', props: null, children: []}, 1])
 	t.is(html`1<x/>`, ['1', {tag:'x', props: null, children: []}])
 	t.is(html`${1}<x/>`, [1, {tag:'x', props: null, children: []}])
@@ -109,4 +109,3 @@ t.skip('indentation & spaces', t => {
 		`, h('a', null, 'before', 'foo', h('b', null), 'bar', 'after'));
 	t.end()
 })
-
