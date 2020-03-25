@@ -22,8 +22,8 @@ export default function htm (statics) {
 
   // close level
   const up = () => {
-    [current, ...args] = current
-    current.push(h(...(last = args)))
+    [current, last, ...args] = current
+    current.push(h(last, ...args))
   }
 
   statics
@@ -43,14 +43,14 @@ export default function htm (statics) {
           .replace(/(\S)\/$/, '$1 /')
           .split(' ').map((part, i) => {
             if (part[0] === '/') {
-              close = true
+              close = part.slice(1) || 1
             }
             else if (!i) {
               tag = evaluate(part)
               // <p>abc<p>def, <tr><td>x<tr>
               while (htm.close[current[1]+tag]) up()
               current = [current, tag, null]
-              if (htm.empty[tag]) close = 1
+              if (htm.empty[tag]) close = 2
             }
             else if (part) {
               let props = current[2] || (current[2] = {})
@@ -67,7 +67,7 @@ export default function htm (statics) {
       if (close) {
         up()
         // if last child is closable - close it too
-        while (!current.root && last && htm.close[last[0]]) up()
+        while (last !== close && htm.close[last]) up()
       }
       prev = idx + match.length
       if (text) evaluate((last = 0, text), current, true)
