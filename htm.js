@@ -48,7 +48,7 @@ export default function htm (statics) {
             else if (!i) {
               tag = evaluate(part)
               // <p>abc<p>def, <tr><td>x<tr>
-              while (htm.close[[current[1], tag]]) up()
+              while (htm.close[current[1]+tag]) up()
               current = [current, tag, null]
               if (htm.empty[tag]) close = 1
             }

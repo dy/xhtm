@@ -26,10 +26,10 @@ for (let tag in close) {
   [...close[tag].split(' '), tag].map(closer => {
     htm.close[tag] =
     htm.close[tag.toUpperCase()] =
-    htm.close[[tag, closer]] =
-    htm.close[[tag.toUpperCase(), closer]] =
-    htm.close[[tag, closer.toUpperCase()]] =
-    htm.close[[tag.toUpperCase(), closer.toUpperCase()]] =
+    htm.close[tag + closer] =
+    htm.close[tag.toUpperCase() + closer] =
+    htm.close[tag + closer.toUpperCase()] =
+    htm.close[tag.toUpperCase() + closer.toUpperCase()] =
     true
   })
 }
