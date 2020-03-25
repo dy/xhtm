@@ -78,6 +78,18 @@ t('optional closing tags 2', t => {
 	]})
 })
 
+t('optional/self-closing readme', t => {
+  t.is(html`
+    <h1>Hello World!</h1>
+    <p>Some paragraph<br>
+    <p>Another paragraph
+  `, [
+    { tag: 'h1', props: null, children: ['Hello World!']},
+    { tag: 'p', props: null, children: ['Some paragraph', { tag: 'br', props: null, children: []}]},
+    { tag: 'p', props: null, children: ['Another paragraph ']}
+  ])
+})
+
 
 t('html: directives', t => {
   t.is(html`<?xml version="1.0" encoding="UTF-8" ?>`, {tag:'?xml', props:{version:'1.0', encoding:'UTF-8', '?': true}, children:[]})

@@ -10,7 +10,7 @@
 _XHTM_ is alternative implementation of [HTM](https://ghub.io/htm) without HTM-specific limitations.
 Low-level machinery is rejected in favor of readable high-level js and better HTML support.
 
-Originally that was just state of art HTML parser implementation ( ~60LOC, best from 10 variants in R&D branches), but turned out it has ideal qualities for [spect/html](https://ghub.io/spect) - tiny size, no cache, single-time run, better syntax support, extensibility.
+Originally that was just state of art HTML parser implementation ( ~60LOC, best from 10 variants in R&D branches), but turned out it has ideal qualities for [spect/h](https://ghub.io/spect) - tiny size, no cache, single-time run, better syntax support, extensibility.
 
 ## Differences from HTM
 
@@ -18,9 +18,10 @@ Originally that was just state of art HTML parser implementation ( ~60LOC, best 
 * HTML directives `<!doctype>`, `<?xml?>` etc. support [#91](https://github.com/developit/htm/issues/91).
 * Optionally closed tags support `<p>foo<p>bar` → `<p>foo</p><p>bar</p>` [#91](https://github.com/developit/htm/issues/91).
 * Interpolated props are exposed as arrays `` html`<a class="a ${b} c"/>` `` → `h('a', { class: ['a ', b, ' c'] })`.
-* Calculated tag names [#109](https://github.com/developit/htm/issues/109).
+* Calculated tag names [#109](https://github.com/developit/htm/issues/109) support.
 * Ignoring null-like arguments (customizable) [#129](https://github.com/developit/htm/issues/129).
 * No integrations exported, no babel compilers.
+* No cache.
 
 <!--
 * Dynamic attribute names [#124](https://github.com/developit/htm/issues/124).
@@ -33,7 +34,7 @@ Originally that was just state of art HTML parser implementation ( ~60LOC, best 
 
 [![NPM](https://nodei.co/npm/xhtm.png?mini=true)](https://nodei.co/npm/xhtm/)
 
-`xhtm` is by default compatible with `htm` and can be used as drop-in replacement.
+`xhtm` is by default fully compatible with `htm` and can be used as drop-in replacement.
 
 ```js
 import htm from 'xhtm'
@@ -43,8 +44,8 @@ html = htm.bind(h)
 
 render(html`
   <h1>Hello World!</h1>
-  <p>Some paragraph<br/></p>
-  <p>Another paragraph</p>
+  <p>Some paragraph<br>
+  <p>Another paragraph
 `, document.getElementById('app'))
 ```
 
