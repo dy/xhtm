@@ -1,10 +1,47 @@
-import {html} from './index.js';
-// import htm from '../dist/xhtm.modern.js';
+// import {html} from './index.js';
+// import htm from '../htm.js';
 // import htm from 'htm/mini';
+import htm from 'htm/src/index.mjs';
 // import htm from 'htm';
 import t from 'tst'
 import performanceNow from 'performance-now'
 
+
+const h = (tag, props, ...children) => {
+	if (Array.isArray(tag)) tag = tag.join('')
+	for (let p in props) Array.isArray(props[p]) && (props[p] = props[p].join(''))
+	return { tag, props, children }
+}
+const html = htm.bind(h)
+
+
+t('creation innerHTML', (t) => {
+	const results = [];
+	let count = 0;
+	let el = document.createElement('div')
+	function go(count) {
+		el.innerHTML = [
+			'\n<div id=app', ++count, ' data-loading="true">\n\t<h1>Hello World</h1>\n\t<ul class="items" id=', 'id', count, '>\n\t',
+			`<li data-id="${'i' + count}">${'some text #' + count}</li>`,
+			'\n\t</ul>\n\t\n\t<div class="foo" name="foo">\n\t<div class="foo" name="other">other</div>\n\n</div>'
+		].join('');
+		return el
+	}
+	let now = performanceNow();
+	const start = now;
+	while ((now = performanceNow()) < start+1000) {
+		count++;
+		if (results.push(String(go(count)))===10) results.length = 0;
+	}
+	const elapsed = now - start;
+	const hz = count / elapsed * 1000;
+	// eslint-disable-next-line no-console
+	console.log(`Creation: ${(hz|0).toLocaleString()}/s, average: ${elapsed/count*1000|0}µs`);
+	t.ok(elapsed > 999);
+	t.ok(hz > 1000);
+
+	t.end()
+});
 
 t('creation', (t) => {
 	const results = [];
