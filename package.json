@@ -3,11 +3,10 @@
   "version": "1.5.3",
   "description": "Extensible HTM",
   "main": "index.js",
-  "module": "index.js",
   "source": "index.js",
   "scripts": {
-    "start": "parcel serve --no-hmr test/index.html",
-    "test": "node -r esm test/index.js",
+    "start": "es-dev-server --app-index test/index.html --node-resolve --dedupe",
+    "test": "node -r test/index.js",
     "start:bench": "parcel serve --no-hmr test/bench.html",
     "build": "microbundle build --no-sourcemap -f modern --target web && shx mv index.modern.js index.min.js"
   },
@@ -37,6 +36,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.7.7",
     "@babel/preset-modules": "^0.1.2",
+    "es-dev-server": "^1.53.0",
     "esm": "^3.2.25",
     "htm": "^2.2.1",
     "microbundle": "^0.12.0-next.6",
