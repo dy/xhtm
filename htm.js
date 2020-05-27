@@ -4,25 +4,22 @@ const ELEM = 1, ATTR = 2, TEXT = 3, COMM = 8, FRAG = 11, COMP = 6
 
 export default function (statics) {
   const evaluate = ([root, tag, proplist, ...children]) => {
-    if (typeof tag === 'number') tag = arguments[tag]
+    tag = deref(tag)
 
     let props = null
     if (proplist) {
       props = {}
       for (let i = 0,k,v; i < proplist.length; i+=2) {
         k = proplist[i], v = proplist[i+1]
-        if (typeof k === 'number') k = arguments[k]
-        else if (k === null) Object.assign(props, arguments[v])
-        else props[k] = !v.length ? '' :
-          v.length > 1 ? v.map(i => typeof i === 'number' ? arguments[i] : i).join('') :
-          typeof v[0] === 'number' ? arguments[v[0]] : v[0]
+        if (k === null) Object.assign(props, arguments[v])
+        else props[deref(k)] = !v.length ? '' : v.length > 1 ? v.map(deref).join('') : deref(v[0])
       }
     }
 
-    return this(tag, props, ...children.map(child => Array.isArray(child) ? evaluate(child) : typeof child === 'number' ? arguments[child] : child))
-  }
-
-  let result = build(statics).map(item => Array.isArray(item) ? evaluate(item) : item)
+    return this(tag, props, ...children.map(child => Array.isArray(child) ? evaluate(child) : deref(child)))
+  },
+  deref = a => typeof a === 'number' ? arguments[a] : a,
+  result = build(statics).map(child => Array.isArray(child) ? evaluate(child) : deref(child))
 
   return !result.length ? undefined : result.length === 1 ? result[0] : result
 }
@@ -69,7 +66,7 @@ const build = statics => {
       // Ignore everything until the last three characters are '-', '-' and '>'
 			else if (mode === COMM) if (buf === '--' && char === '>') mode = TEXT, buf = ''; else buf = char + buf[0]
 
-      else if (char === quote) quote = '', commit();
+      else if (quote) if (char === quote) quote = '', commit(); else buf += char
 			else if (char === '"' || char === "'") quote = char
 			else if (char === '>') commit(), mode=TEXT
 
