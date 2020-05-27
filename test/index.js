@@ -5,7 +5,6 @@ import './html.js'
 import './perf.js'
 
 
-
 export const h = (tag, props, ...children) => {
 	if (Array.isArray(tag)) tag = tag.join('')
 	for (let p in props) Array.isArray(props[p]) && (props[p] = props[p].join(''))

@@ -1,5 +1,5 @@
 import t from 'tst'
-import { html } from './index.js'
+import { html, h } from './index.js'
 
 
 t('base case', t => {
@@ -57,6 +57,14 @@ t('tag cases', t => {
 	t.is(html`<abc d=${'e'}${'f'} />`, { tag: 'abc', props: { d: 'ef' }, children: [] })
 	t.is(html`<abc d=e${'f'} />`, { tag: 'abc', props: { d: 'ef' }, children: [] })
 	t.end()
+})
+
+t('unclosed value attr case', t => {
+	t.is(html`<a b><c d/></a>`, h('a',{b:''}, h('c', {d:''})))
+	t.is(html`<a b=1><c d/></a>`, h('a',{b:'1'}, h('c', {d:''})))
+	t.is(html`<a b><c d=1/></a>`, h('a',{b:''}, h('c', {d:'1'})))
+	t.is(html`<a b/><c d=1/>`, [h('a',{b:''}), h('c', {d:'1'})])
+	t.is(html`<a b/><c d/>`, [h('a',{b:''}), h('c', {d:''})])
 })
 
 t('quoted cases', t => {
