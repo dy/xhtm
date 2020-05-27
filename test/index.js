@@ -1,4 +1,4 @@
-import htm from '../htm.js'
+import htm from '../index.js'
 // import htm from 'htm/src/index.mjs'
 import './htm.js'
 import './html.js'

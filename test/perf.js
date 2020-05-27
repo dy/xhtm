@@ -1,17 +1,5 @@
 import {html, h} from './index.js';
-// import htm from '../htm.js';
-// import htm from 'htm/mini';
-// import htm from 'htm/src/index.mjs';
-// import htm from 'htm';
 import t from 'tst'
-
-
-// const h = (tag, props, ...children) => {
-// 	if (Array.isArray(tag)) tag = tag.join('')
-// 	for (let p in props) Array.isArray(props[p]) && (props[p] = props[p].join(''))
-// 	return { tag, props, children }
-// }
-// const html = htm.bind(h)
 
 
 t('creation innerHTML', (t) => {

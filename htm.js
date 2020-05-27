@@ -1,6 +1,6 @@
 // htm-compatible parser
 // skips HTM static caching, returns levels
-const ELEM = 1, ATTR = 2, TEXT = 3, COMM = 8, FRAG = 11, COMP = 6
+const ELEM = 1, ATTR = 2, TEXT = 3, COMM = 8, FRAG = 11, COMP = 6, SKIP = 0
 
 export default function (statics) {
   const evaluate = ([root, tag, proplist, ...children]) => {
@@ -12,7 +12,7 @@ export default function (statics) {
       for (let i = 0,k,v; i < proplist.length; i+=2) {
         k = proplist[i], v = proplist[i+1]
         if (k === null) Object.assign(props, arguments[v])
-        else props[deref(k)] = !v.length ? '' : v.length > 1 ? v.map(deref).join('') : deref(v[0])
+        else props[deref(k)] = Array.isArray(v) ? v.length === 1 ? deref(v[0]) : v.map(deref).join('') : deref(v)
       }
     }
 
@@ -36,19 +36,19 @@ const build = statics => {
     }
     // <el, <${el} ;        ELEM, str | field
     else if (mode === ELEM) current.push(current = [current, el = i || buf, null]), mode = ATTR
-    else if (mode === ATTR) {
+    else if (mode === ATTR && (buf || i)) {
       // a=${b}, a=a${b}, a=a${b}c
       if (value) {
         if (buf) value.push(buf)
         if (i) value.push(i)
       }
-      else if (buf || i) {
+      else {
         if (!current[2]) props = current[2] = []
 
         // <x ...${{}};    null, field
         if (buf === '...') props.push(null, i)
         // <x ${'a'}, <x a, <x a= ;    field, null
-        else props.push(i || buf, value = [])
+        else props.push(i || buf, value = char === '=' ? [] : true)
       }
     }
     buf = ''
@@ -64,7 +64,7 @@ const build = statics => {
 			if (mode === TEXT) if (char === '<') commit(), mode = ELEM; else buf += char
 
       // Ignore everything until the last three characters are '-', '-' and '>'
-			else if (mode === COMM) if (buf === '--' && char === '>') mode = TEXT, buf = ''; else buf = char + buf[0]
+			// else if (mode === COMM) if (buf === '--' && char === '>') mode = TEXT, buf = ''; else buf = char + buf[0]
 
       else if (quote) if (char === quote) quote = '', commit(); else buf += char
 			else if (char === '"' || char === "'") quote = char
@@ -84,7 +84,7 @@ const build = statics => {
 			else buf += char
 
       // detect comment
-			if (mode === ELEM && buf === '!--') mode = COMM
+			if (mode === ELEM && (buf === '!' || buf === '?')) mode = SKIP
 		}
 	}
 

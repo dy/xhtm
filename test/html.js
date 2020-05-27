@@ -14,8 +14,8 @@ t('plain text', t => {
 	t.is(html`a${'b'}c`, ['a', 'b', 'c'])
 	t.is(html`a${1}b${2}c`, ['a', 1, 'b', 2, 'c'])
 	t.is(html`foo${''}bar${''}`, ['foo', '', 'bar', ''])
-	t.is(html`${'foo'}${'bar'}`, ['foo', '', 'bar'])
-	t.is(html`${''}${''}`, ['', '', ''])
+	t.is(html`${'foo'}${'bar'}`, ['foo', 'bar'])
+	t.is(html`${''}${''}`, ['', ''])
 	t.end()
 })
 t('tag cases', t => {
@@ -32,9 +32,9 @@ t('tag cases', t => {
 	t.is(html`<abc></>`, { tag: 'abc', props: null, children: [] })
 	t.is(html`<abc></abc>`, { tag: 'abc', props: null, children: [] })
 	t.is(html`<${'abc'} />`, { tag: 'abc', props: null, children: [] })
-	// // // t.is(html`<a${'bc'} />`, { tag: 'abc', props: null, children: [] })
-	// // // t.is(html`<${'ab'}c />`, { tag: 'abc', props: null, children: [] })
-	// // // t.is(html`<${'a'}${'b'}${'c'} />`, { tag: 'abc', props: null, children: [] })
+	// // // // t.is(html`<a${'bc'} />`, { tag: 'abc', props: null, children: [] })
+	// // // // t.is(html`<${'ab'}c />`, { tag: 'abc', props: null, children: [] })
+	// // // // t.is(html`<${'a'}${'b'}${'c'} />`, { tag: 'abc', props: null, children: [] })
 	t.is(html`<abc d/>`, { tag: 'abc', props: { d: true }, children: [] })
 	t.is(html`<abc d />`, { tag: 'abc', props: { d: true }, children: [] })
 	t.is(html`<abc d  />`, { tag: 'abc', props: { d: true }, children: [] })
@@ -60,11 +60,11 @@ t('tag cases', t => {
 })
 
 t('unclosed value attr case', t => {
-	t.is(html`<a b><c d/></a>`, h('a',{b:''}, h('c', {d:''})))
-	t.is(html`<a b=1><c d/></a>`, h('a',{b:'1'}, h('c', {d:''})))
-	t.is(html`<a b><c d=1/></a>`, h('a',{b:''}, h('c', {d:'1'})))
-	t.is(html`<a b/><c d=1/>`, [h('a',{b:''}), h('c', {d:'1'})])
-	t.is(html`<a b/><c d/>`, [h('a',{b:''}), h('c', {d:''})])
+	t.is(html`<a b><c d/></a>`, h('a',{b:true}, h('c', {d:true})))
+	t.is(html`<a b=1><c d/></a>`, h('a',{b:'1'}, h('c', {d:true})))
+	t.is(html`<a b><c d=1/></a>`, h('a',{b:true}, h('c', {d:'1'})))
+	t.is(html`<a b/><c d=1/>`, [h('a',{b:true}), h('c', {d:'1'})])
+	t.is(html`<a b/><c d/>`, [h('a',{b:true}), h('c', {d:true})])
 })
 
 t('quoted cases', t => {
@@ -259,9 +259,12 @@ t('html: tr case', t => {
 })
 
 t('html: directives', t => {
-  t.is(html`<?xml version="1.0" encoding="UTF-8" ?>`, {tag:'?xml', props:{version:'1.0', encoding:'UTF-8', '?': true}, children:[]})
-  t.is(html`<!doctype html>`, {tag: '!doctype', props:{html: true}, children:[]})
-  t.is(html`<!DOCTYPE html>`, {tag: '!DOCTYPE', props:{html: true}, children:[]})
+  // t.is(html`<?xml version="1.0" encoding="UTF-8" ?>`, {tag:'?xml', props:{version:'1.0', encoding:'UTF-8', '?': true}, children:[]})
+  t.is(html`<?xml version="1.0" encoding="UTF-8" ?>`, undefined)
+  // t.is(html`<!doctype html>`, {tag: '!doctype', props:{html: true}, children:[]})
+  t.is(html`<!doctype html>`, undefined)
+  // t.is(html`<!DOCTYPE html>`, {tag: '!DOCTYPE', props:{html: true}, children:[]})
+  t.is(html`<!DOCTYPE html>`, undefined)
   // t.is(html`<!ELEMENT html (head, body)>`, {tag:, props:{}, children:[]})
   t.is(html`<? header("Content-Type: text/html; charset= UTF-8"); ?>`, {tag: '?', props:{'header("Content-Type: text/html; charset= UTF-8");': true, '?': true}, children: []})
   t.is(html`<![CDATA[<sender>]]>`, undefined)
