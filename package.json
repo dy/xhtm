@@ -1,12 +1,12 @@
 {
   "name": "xhtm",
   "version": "1.5.3",
-  "description": "Extensible HTM",
+  "description": "Extended HTM - hypertext tagged markup",
   "main": "index.js",
   "source": "index.js",
   "scripts": {
     "start": "es-dev-server --app-index test/index.html --node-resolve --dedupe",
-    "test": "node -r test/index.js",
+    "test": "node test/index.js",
     "build": "microbundle build --no-sourcemap -f modern --target web && shx mv index.modern.js index.min.js"
   },
   "files": [

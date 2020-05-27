@@ -2,7 +2,7 @@ import {html, h} from './index.js';
 import t from 'tst'
 
 
-t('creation innerHTML', (t) => {
+t.skip('creation innerHTML', (t) => {
 	const results = [];
 	let count = 0;
 	let el = document.createElement('div')

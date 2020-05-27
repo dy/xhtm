@@ -7,24 +7,19 @@
 <img src="https://img.shields.io/badge/stability-unstable-yellow" alt="stability"/>
 </p>
 
-_XHTM_ is alternative implementation of [HTM](https://ghub.io/htm) without HTM-specific limitations.
-Low-level machinery is rejected in favor of readability and better HTML support.
-
-Originally that was just state of art HTML parser implementation ( ~60LOC, best from 10 variants in R&D branches), but turned out it has ideal qualities for [spect/h](https://ghub.io/spect) (tiny size, no cache, HTML support, extensibility).
+_XHTM_ is alternative implementation of [HTM](https://ghub.io/htm).
 
 ## Differences from HTM
 
 * Self-closing tags support `` htm`<input><br>` `` → `[h('input'), h('br')]`.
 * HTML directives `<!doctype>`, `<?xml?>` etc. support [#91](https://github.com/developit/htm/issues/91).
-* Optionally closed tags support `<p>foo<p>bar` → `<p>foo</p><p>bar</p>` [#91](https://github.com/developit/htm/issues/91).
-* Interpolated props are exposed as arrays `` html`<a class="a ${b} c"/>` `` → `h('a', { class: ['a ', b, ' c'] })`.
-* Calculated tag names [#109](https://github.com/developit/htm/issues/109) support.
-* Ignoring null-like arguments (customizable) [#129](https://github.com/developit/htm/issues/129).
-* No integrations exported, no babel compilers.
-* No cache.
+* Ignoring null-like arguments [#129](https://github.com/developit/htm/issues/129).
+* Dynamic attribute names [#124](https://github.com/developit/htm/issues/124).
 
 <!--
-* Dynamic attribute names [#124](https://github.com/developit/htm/issues/124).
+* Calculated tag names [#109](https://github.com/developit/htm/issues/109) support.
+* Interpolated props are exposed as arrays `` html`<a class="a ${b} c"/>` `` → `h('a', { class: ['a ', b, ' c'] })`.
+* Optionally closed tags support `<p>foo<p>bar` → `<p>foo</p><p>bar</p>` [#91](https://github.com/developit/htm/issues/91).
 * Spaces are compatible with HTML (customizable) [#128](https://github.com/developit/htm/issues/128).
 * Escaping quotes [#96](https://github.com/developit/htm/issues/96).
 -->

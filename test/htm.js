@@ -266,6 +266,6 @@ t('ignore HTML comments', (t) => {
   t.is(html`<a><!-- Hello, world! --></a>`, h('a', null));
   t.is(html`<a><!-- Hello,\nworld! --></a>`, h('a', null));
   t.is(html`<a><!-- ${'Hello, world!'} --></a>`, h('a', null));
-  t.is(html`<a><!--> Hello, world <!--></a>`, h('a', null));
+  // t.is(html`<a><!--> Hello, world <!--></a>`, h('a', null));
   t.end()
 });
