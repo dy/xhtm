@@ -1,18 +1,17 @@
-// import {html} from './index.js';
+import {html, h} from './index.js';
 // import htm from '../htm.js';
 // import htm from 'htm/mini';
-import htm from 'htm/src/index.mjs';
+// import htm from 'htm/src/index.mjs';
 // import htm from 'htm';
 import t from 'tst'
-import performanceNow from 'performance-now'
 
 
-const h = (tag, props, ...children) => {
-	if (Array.isArray(tag)) tag = tag.join('')
-	for (let p in props) Array.isArray(props[p]) && (props[p] = props[p].join(''))
-	return { tag, props, children }
-}
-const html = htm.bind(h)
+// const h = (tag, props, ...children) => {
+// 	if (Array.isArray(tag)) tag = tag.join('')
+// 	for (let p in props) Array.isArray(props[p]) && (props[p] = props[p].join(''))
+// 	return { tag, props, children }
+// }
+// const html = htm.bind(h)
 
 
 t('creation innerHTML', (t) => {
@@ -27,9 +26,9 @@ t('creation innerHTML', (t) => {
 		].join('');
 		return el
 	}
-	let now = performanceNow();
+	let now = performance.now();
 	const start = now;
-	while ((now = performanceNow()) < start+1000) {
+	while ((now = performance.now()) < start+1000) {
 		count++;
 		if (results.push(String(go(count)))===10) results.length = 0;
 	}
@@ -59,9 +58,9 @@ t('creation', (t) => {
 			Foo, Foo
 		);
 	}
-	let now = performanceNow();
+	let now = performance.now();
 	const start = now;
-	while ((now = performanceNow()) < start+1000) {
+	while ((now = performance.now()) < start+1000) {
 		count++;
 		if (results.push(String(go(count)))===10) results.length = 0;
 	}

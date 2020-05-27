@@ -18,7 +18,7 @@ t('plain text', t => {
 	t.is(html`${''}${''}`, ['', '', ''])
 	t.end()
 })
-t.only('tag cases', t => {
+t('tag cases', t => {
 	// special case: both self-closing empty tag and ending tag
 	// t.is(html`</>`, { tag: '', props: null, children: []})
 

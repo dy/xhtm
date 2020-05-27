@@ -1,5 +1,5 @@
 import t from 'tst'
-import { html } from './index.js'
+import { html, h } from './index.js'
 
 t('empty', (t) => {
   t.is(html``, undefined);
@@ -30,12 +30,18 @@ t('single dynamic tag name', (t) => {
 });
 
 t('single boolean prop', (t) => {
-  t.is(html`<a disabled />`, { tag: 'a', props: { disabled: true }, children: [] });
+  t.any(html`<a disabled />`, [
+    { tag: 'a', props: { disabled: true }, children: [] },
+    { tag: 'a', props: { disabled: '' }, children: [] }
+  ]);
   t.end()
 });
 
 t('two boolean props', (t) => {
-  t.is(html`<a invisible disabled />`, { tag: 'a', props: { invisible: true, disabled: true }, children: [] });
+  t.any(html`<a invisible disabled />`, [
+    { tag: 'a', props: { invisible: true, disabled: true }, children: [] },
+    { tag: 'a', props: { invisible: '', disabled: '' }, children: [] },
+  ]);
   t.end()
 });
 
@@ -60,7 +66,10 @@ t('single prop with static value', (t) => {
 });
 
 t('single prop with static value followed by a single boolean prop', (t) => {
-  t.is(html`<a href="/hello" b />`, { tag: 'a', props: { href: '/hello', b: true }, children: [] });
+  t.any(html`<a href="/hello" b />`, [
+    { tag: 'a', props: { href: '/hello', b: true }, children: [] },
+    { tag: 'a', props: { href: '/hello', b: '' }, children: [] },
+  ]);
   t.end()
 });
 
@@ -107,9 +116,18 @@ t('prop with multiple static and dynamic values get concatenated as strings', (t
 t('spread props', (t) => {
   t.is(html`<a  />`, { tag: 'a', props: null, children: [] });
   t.is(html`<a ...${{ foo: 'bar' }} />`, { tag: 'a', props: { foo: 'bar' }, children: [] });
-  t.is(html`<a b ...${{ foo: 'bar' }} />`, { tag: 'a', props: { b: true, foo: 'bar' }, children: [] });
-  t.is(html`<a b c ...${{ foo: 'bar' }} />`, { tag: 'a', props: { b: true, c: true, foo: 'bar' }, children: [] });
-  t.is(html`<a ...${{ foo: 'bar' }} b />`, { tag: 'a', props: { b: true, foo: 'bar' }, children: [] });
+  t.any(html`<a b ...${{ foo: 'bar' }} />`, [
+    { tag: 'a', props: { b: true, foo: 'bar' }, children: [] },
+    { tag: 'a', props: { b: '', foo: 'bar' }, children: [] }
+  ]);
+  t.any(html`<a b c ...${{ foo: 'bar' }} />`, [
+    { tag: 'a', props: { b: true, c: true, foo: 'bar' }, children: [] },
+    { tag: 'a', props: { b: '', c: '', foo: 'bar' }, children: [] }
+  ]);
+  t.any(html`<a ...${{ foo: 'bar' }} b />`, [
+    { tag: 'a', props: { b: true, foo: 'bar' }, children: [] },
+    { tag: 'a', props: { b: '', foo: 'bar' }, children: [] },
+  ]);
   t.is(html`<a b="1" ...${{ foo: 'bar' }} />`, { tag: 'a', props: { b: '1', foo: 'bar' }, children: [] });
   t.is(html`<a x="1"><b y="2" ...${{ c: 'bar' }}/></a>`, h('a', { x: '1' }, h('b', { y: '2', c: 'bar' })));
   t.is(html`<a b=${2} ...${{ c: 3 }}>d: ${4}</a>`, h('a', { b: 2, c: 3 }, 'd: ', 4));
@@ -123,16 +141,31 @@ t('multiple spread props in one element', (t) => {
 });
 
 t('mixed spread + static props', (t) => {
-  t.is(html`<a b ...${{ foo: 'bar' }} />`, { tag: 'a', props: { b: true, foo: 'bar' }, children: [] });
-  t.is(html`<a b c ...${{ foo: 'bar' }} />`, { tag: 'a', props: { b: true, c: true, foo: 'bar' }, children: [] });
-  t.is(html`<a ...${{ foo: 'bar' }} b />`, { tag: 'a', props: { b: true, foo: 'bar' }, children: [] });
-  t.is(html`<a ...${{ foo: 'bar' }} b c />`, { tag: 'a', props: { b: true, c: true, foo: 'bar' }, children: [] });
+  t.any(html`<a b ...${{ foo: 'bar' }} />`, [
+    { tag: 'a', props: { b: true, foo: 'bar' }, children: [] },
+    { tag: 'a', props: { b: '', foo: 'bar' }, children: [] },
+  ]);
+  t.any(html`<a b c ...${{ foo: 'bar' }} />`, [
+    { tag: 'a', props: { b: true, c: true, foo: 'bar' }, children: [] },
+    { tag: 'a', props: { b: '', c: '', foo: 'bar' }, children: [] },
+  ]);
+  t.any(html`<a ...${{ foo: 'bar' }} b />`, [
+    { tag: 'a', props: { b: true, foo: 'bar' }, children: [] },
+    { tag: 'a', props: { b: '', foo: 'bar' }, children: [] },
+  ]);
+  t.any(html`<a ...${{ foo: 'bar' }} b c />`, [
+    { tag: 'a', props: { b: true, c: true, foo: 'bar' }, children: [] },
+    { tag: 'a', props: { b: '', c: '', foo: 'bar' }, children: [] },
+  ]);
   t.end()
 });
 
 t('closing tag', (t) => {
   t.is(html`<a></a>`, { tag: 'a', props: null, children: [] });
-  t.is(html`<a b></a>`, { tag: 'a', props: { b: true }, children: [] });
+  t.any(html`<a b></a>`, [
+    { tag: 'a', props: { b: true }, children: [] },
+    { tag: 'a', props: { b: '' }, children: [] },
+  ]);
   t.end()
 });
 
@@ -177,7 +210,10 @@ t('element child', (t) => {
 
 t('multiple element children', (t) => {
   t.is(html`<a><b /><c /></a>`, h('a', null, h('b', null), h('c', null)));
-  t.is(html`<a x><b y /><c z /></a>`, h('a', { x: true }, h('b', { y: true }), h('c', { z: true })));
+  t.any(html`<a x><b y /><c z /></a>`, [
+    h('a', { x: true }, h('b', { y: true }), h('c', { z: true })),
+    h('a', { x: '' }, h('b', { y: '' }), h('c', { z: '' })),
+  ]);
   t.is(html`<a x=1><b y=2 /><c z=3 /></a>`, h('a', { x: '1' }, h('b', { y: '2' }), h('c', { z: '3' })));
   t.is(html`<a x=${1}><b y=${2} /><c z=${3} /></a>`, h('a', { x: 1 }, h('b', { y: 2 }), h('c', { z: 3 })));
   t.end()
@@ -192,7 +228,10 @@ t('mixed typed children', (t) => {
 });
 
 t('hyphens (-) are allowed in attribute names', (t) => {
-  t.is(html`<a b-c></a>`, h('a', { 'b-c': true }));
+  t.any(html`<a b-c></a>`, [
+    h('a', { 'b-c': true }),
+    h('a', { 'b-c': '' })
+  ]);
   t.end()
 });
 
@@ -211,8 +250,8 @@ t('NUL characters are allowed in text', (t) => {
 t('cache key should be unique', (t) => {
   html`<a b="${'foo'}" />`;
   t.is(html`<a b="\0" />`, h('a', { b: '\0' }));
-  t.notis(html`<a>${''}9aaaaaaaaa${''}</a>`, html`<a>${''}0${''}aaaaaaaaa${''}</a>`);
-  t.notis(html`<a>${''}0${''}aaaaaaaa${''}</a>`, html`<a>${''}.8aaaaaaaa${''}</a>`);
+  t.not(html`<a>${''}9aaaaaaaaa${''}</a>`, html`<a>${''}0${''}aaaaaaaaa${''}</a>`);
+  t.not(html`<a>${''}0${''}aaaaaaaa${''}</a>`, html`<a>${''}.8aaaaaaaa${''}</a>`);
   t.end()
 });
 

@@ -7,7 +7,6 @@
   "scripts": {
     "start": "es-dev-server --app-index test/index.html --node-resolve --dedupe",
     "test": "node -r test/index.js",
-    "start:bench": "parcel serve --no-hmr test/bench.html",
     "build": "microbundle build --no-sourcemap -f modern --target web && shx mv index.modern.js index.min.js"
   },
   "files": [
@@ -42,7 +41,7 @@
     "microbundle": "^0.12.0-next.6",
     "performance-now": "^2.1.0",
     "shx": "^0.3.2",
-    "tst": "^5.3.3"
+    "tst": "^6.1.0"
   },
   "dependencies": {}
 }
