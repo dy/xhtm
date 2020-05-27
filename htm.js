@@ -1,6 +1,8 @@
 // htm-compatible parser
 // skips HTM static caching, returns levels
-const ELEM = 1, ATTR = 2, TEXT = 3, COMM = 8, FRAG = 11, COMP = 6, SKIP = 0
+const ELEM = 1, ATTR = 2, TEXT = 3, COMM = 8, FRAG = 11, COMP = 6, END = 0
+
+const empty = 'area base br col command embed hr img input keygen link meta param source track wbr'.split(' ')
 
 export default function (statics) {
   const evaluate = ([root, tag, proplist, ...children]) => {
@@ -18,15 +20,17 @@ export default function (statics) {
 
     return this(tag, props, ...children.map(child => Array.isArray(child) ? evaluate(child) : deref(child)))
   },
-  deref = a => typeof a === 'number' ? arguments[a] : a,
-  result = build(statics).map(child => Array.isArray(child) ? evaluate(child) : deref(child))
+  deref = a => typeof a === 'number' ? arguments[a] : a
+  let result = build(statics)
+
+  result = result.map(child => Array.isArray(child) ? evaluate(child) : deref(child))
 
   return !result.length ? undefined : result.length === 1 ? result[0] : result
 }
 
 const build = statics => {
   // program schema: [parent, tag, [k, v, k, v, ...], text?, [parent, tag, ...]?, ... ]
-  let mode = TEXT, buf = '', quote = '', value, props, char, el, current = []
+  let mode = TEXT, buf = '', quote = '', value, props, char, el, current = [], last
 
   const commit = i => {
     // >a${1}b${2}c< ;         TEXT, str | field
@@ -35,7 +39,9 @@ const build = statics => {
       if (i) current.push(i)
     }
     // <el, <${el} ;        ELEM, str | field
-    else if (mode === ELEM) current.push(current = [current, el = i || buf, null]), mode = ATTR
+    else if (mode === ELEM) {
+      current.push(current = [current, el = i || buf, null]), mode = ATTR
+    }
     else if (mode === ATTR && (buf || i)) {
       // a=${b}, a=a${b}, a=a${b}c
       if (value) {
@@ -68,15 +74,24 @@ const build = statics => {
 
       else if (quote) if (char === quote) quote = '', commit(); else buf += char
 			else if (char === '"' || char === "'") quote = char
-			else if (char === '>') commit(), mode=TEXT
+			else if (char === '>') {
+        // <a b>
+        if (mode) commit()
+
+        // </xxx>, <a b/>, <input>
+        if (!mode || empty.includes(el)) current = current[0]
+
+        // <!-->, <? ... >
+        mode=TEXT
+      }
 
       // </...ignore until >
 			else if (!mode) {}
 
       else if (char === '=') commit()
 
-      // </a,   xyz />
-      else if (char === '/' && (mode === ELEM || statics[i][j+1] === '>')) buf && commit(), mode = 0, current=current[0]
+      // </a, <a b/>
+      else if (char === '/' && (mode === ELEM || statics[i][j+1] === '>')) buf && commit(), mode = END
 
       // cleans up last attr value
 			else if (char === ' ' || char === '\t' || char === '\n' || char === '\r') (commit(), value=null)
@@ -84,7 +99,7 @@ const build = statics => {
 			else buf += char
 
       // detect comment
-			if (mode === ELEM && (buf === '!' || buf === '?')) mode = SKIP
+			if (mode === ELEM && (buf === '!' || buf === '?')) mode = COMM
 		}
 	}
 
