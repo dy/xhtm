@@ -5,9 +5,10 @@
   "main": "index.js",
   "module": "index.js",
   "source": "index.js",
+  "type": "module",
   "scripts": {
     "start": "parcel serve --no-hmr test/index.html",
-    "test": "node -r esm test/index.js",
+    "test": "node test/index.js",
     "start:bench": "parcel serve --no-hmr test/bench.html",
     "build": "microbundle build --no-sourcemap -f modern --target web && shx mv index.modern.js index.min.js"
   },
@@ -35,14 +36,9 @@
   "license": "MIT",
   "homepage": "https://github.com/dy/xhtm",
   "devDependencies": {
-    "@babel/preset-env": "^7.7.7",
-    "@babel/preset-modules": "^0.1.2",
-    "esm": "^3.2.25",
     "htm": "^2.2.1",
     "microbundle": "^0.12.0-next.6",
-    "performance-now": "^2.1.0",
     "shx": "^0.3.2",
     "tst": "^5.3.3"
-  },
-  "dependencies": {}
+  }
 }

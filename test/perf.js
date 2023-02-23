@@ -3,7 +3,6 @@ import {html} from './index.js';
 // import htm from 'htm/mini';
 // import htm from 'htm';
 import t from 'tst'
-import performanceNow from 'performance-now'
 
 
 t('creation', (t) => {
@@ -22,9 +21,9 @@ t('creation', (t) => {
 			Foo, Foo
 		);
 	}
-	let now = performanceNow();
+	let now = performance.now();
 	const start = now;
-	while ((now = performanceNow()) < start+1000) {
+	while ((now = performance.now()) < start+1000) {
 		count++;
 		if (results.push(String(go(count)))===10) results.length = 0;
 	}

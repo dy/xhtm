@@ -1,4 +1,4 @@
-import htm from './htm'
+import htm from './htm.js'
 
 'area base br col command embed hr img input keygen link meta param source track wbr ! !doctype ? ?xml'.split(' ').map(v => htm.empty[v] = htm.empty[v.toUpperCase()] = true)
 
