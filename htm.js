@@ -1,17 +1,16 @@
 const FIELD = '\ue000', QUOTES = '\ue001'
 
 export default function htm (statics) {
-  let h = this, prev = 0, current = [], field = 0, args, name, value, quotes = [], quote = 0, last
-  current.root = true
+  let h = this, prev = 0, current = [null], field = 0, args, name, value, quotes = [], quote = 0, last
 
   const evaluate = (str, parts = [], raw) => {
     let i = 0
     str = !raw && str === QUOTES ?
       quotes[quote++].slice(1,-1) :
-      str.replace(/\ue001/g, m => quotes[quote++])
+      str.replaceAll(QUOTES, m => quotes[quote++])
 
     if (!str) return str
-    str.replace(/\ue000/g, (match, idx) => {
+    str.replaceAll(FIELD, (match, idx) => {
       if (idx) parts.push(str.slice(i, idx))
       i = idx + 1
       return parts.push(arguments[++field])
@@ -74,9 +73,9 @@ export default function htm (statics) {
       if (text && text !== ' ') evaluate((last = 0, text), current, true)
     })
 
-  if (!current.root) up()
+  if (current[0]) up()
 
-  return current.length > 1 ? current : current[0]
+  return current.length > 2 ? current.slice(1) : current[1]
 }
 
 // self-closing elements
