@@ -113,8 +113,15 @@ t.skip('indentation & spaces', t => {
 })
 
 
-t('bug: Additional comma #9', t => {
+t('#9: Additional comma', t => {
 	const html = htm.bind(vhtml)
 	t.equal(html`<li src='https://my.site/section/${2}'></li>`, `<li src="https://my.site/section/2"></li>`)
 
+})
+
+t.skip('#8: Zero value', t => {
+	//NOTE: we don't do it for htm complacency. Hiding zero values is vhtml's issue.
+	const html = htm.bind(vhtml)
+	t.equal(html`<p>Count:${0}</p>`, `<p>Count:0</p>`)
+	t.equal(html`<p>Count:${null}</p>`, `<p>Count:</p>`)
 })

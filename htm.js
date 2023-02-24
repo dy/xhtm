@@ -80,7 +80,7 @@ export default function htm (statics) {
 
   if (current[0]) up()
 
-  return current.length > 2 ? current.slice(1) : current[1]
+  return current.length < 3 ? current[1] : (current.shift(), current)
 }
 
 // self-closing elements

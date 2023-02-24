@@ -23,11 +23,8 @@ let close = {
   'th': 'td tr tbody',
 }
 for (let tag in close) {
-  [...close[tag].split(' '), tag].map(closer => {
-    htm.close[tag] =
-    htm.close[tag + closer] =
-    true
-  })
+  for (let closer of [...close[tag].split(' '), tag])
+    htm.close[tag] = htm.close[tag + closer] = true
 }
 
 export default htm
