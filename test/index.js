@@ -6,6 +6,8 @@ import t from 'tst'
 import htm from '../index.js'
 // import htm from 'htm'
 
+import vhtml from 'vhtml'
+
 export const h = (tag, props, ...children) => {
 	if (Array.isArray(tag)) tag = tag.join('')
 	for (let p in props) Array.isArray(props[p]) && (props[p] = props[p].join(''))
@@ -108,4 +110,11 @@ t.skip('indentation & spaces', t => {
 			</a>
 		`, h('a', null, 'before', 'foo', h('b', null), 'bar', 'after'));
 	t.end()
+})
+
+
+t('bug: Additional comma #9', t => {
+	const html = htm.bind(vhtml)
+	t.equal(html`<li src='https://my.site/section/${2}'></li>`, `<li src="https://my.site/section/2"></li>`)
+
 })

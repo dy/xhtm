@@ -41,24 +41,29 @@ export default function htm (statics) {
           // <abc/> → <abc />
           .replace(/(\S)\/$/, '$1 /')
           .split(' ').map((part, i) => {
+            // </tag>
             if (part[0] === '/') {
               close = tag || part.slice(1) || 1
             }
+            // <tag
             else if (!i) {
               tag = evaluate(part)
               // <p>abc<p>def, <tr><td>x<tr>
-              while (htm.close[current[1]+tag]) up()
+              if (typeof tag === 'string') { tag = tag.toLowerCase(); while (htm.close[current[1]+tag]) up() }
               current = [current, tag, null]
               if (htm.empty[tag]) close = tag
             }
+            // attr=...
             else if (part) {
               let props = current[2] || (current[2] = {})
               if (part.slice(0, 3) === '...') {
                 Object.assign(props, arguments[++field])
               }
               else {
-                [name, value] = part.split('=')
-                props[evaluate(name)] = value ? evaluate(value) : true
+                [name, value] = part.split('=');
+                Array.isArray(value = props[evaluate(name)] = value ? evaluate(value) : true) &&
+                // if prop value is array - make sure it serializes as string without csv
+                (value.toString = () => value.join(''))
               }
             }
           })

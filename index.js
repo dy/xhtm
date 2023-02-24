@@ -1,6 +1,6 @@
 import htm from './htm.js'
 
-'area base br col command embed hr img input keygen link meta param source track wbr ! !doctype ? ?xml'.split(' ').map(v => htm.empty[v] = htm.empty[v.toUpperCase()] = true)
+'area base br col command embed hr img input keygen link meta param source track wbr ! !doctype ? ?xml'.split(' ').map(v => htm.empty[v] = true)
 
 // https://html.spec.whatwg.org/multipage/syntax.html#optional-tags
 // closed by the corresponding tag or end of parent content
@@ -25,11 +25,7 @@ let close = {
 for (let tag in close) {
   [...close[tag].split(' '), tag].map(closer => {
     htm.close[tag] =
-    htm.close[tag.toUpperCase()] =
     htm.close[tag + closer] =
-    htm.close[tag.toUpperCase() + closer] =
-    htm.close[tag + closer.toUpperCase()] =
-    htm.close[tag.toUpperCase() + closer.toUpperCase()] =
     true
   })
 }
