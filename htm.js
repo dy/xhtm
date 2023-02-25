@@ -7,10 +7,10 @@ export default function htm (statics) {
     let i = 0
     str = !raw && str === QUOTES ?
       quotes[quote++].slice(1,-1) :
-      str.replaceAll(QUOTES, m => quotes[quote++])
+      str.replace(/\ue001/g, m => quotes[quote++])
 
     if (!str) return str
-    str.replaceAll(FIELD, (match, idx) => {
+    str.replace(/\ue000/g, (match, idx) => {
       if (idx) parts.push(str.slice(i, idx))
       i = idx + 1
       return parts.push(arguments[++field])
