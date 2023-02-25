@@ -1,7 +1,7 @@
 # XHTM − eXtended HTM Tagged Markup
 
 <p>
-<a href="https://travis-ci.org/dy/xhtm"><img src="https://travis-ci.org/dy/xhtm.svg?branch=master" alt="travis"></a>
+<a href="https://github.com/dy/xhtm/actions/workflows/tests.js.yml"><img src="https://github.com/dy/xhtm/actions/workflows/tests.js.yml/badge.svg"/></a>
 <a href="https://bundlephobia.com/result?p=xhtm"><img alt="size" src="https://img.shields.io/bundlephobia/minzip/xhtm?label=size"></a>
 <a href="https://npmjs.org/package/xhtm"><img alt="version" src="https://img.shields.io/npm/v/xhtm"></a>
 <img src="https://img.shields.io/badge/stability-unstable-yellow" alt="stability"/>
