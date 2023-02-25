@@ -37,7 +37,7 @@
   "homepage": "https://github.com/dy/xhtm",
   "devDependencies": {
     "htm": "^2.2.1",
-    "microbundle": "^0.12.0-next.6",
+    "microbundle": "^0.15.1",
     "shx": "^0.3.2",
     "tst": "^5.3.3",
     "vhtml": "^2.2.0"
