@@ -63,7 +63,7 @@ export default function htm (statics) {
                 [name, value] = part.split('=');
                 Array.isArray(value = props[evaluate(name)] = value ? evaluate(value) : true) &&
                 // if prop value is array - make sure it serializes as string without csv
-                (value.toString = () => value.join(''))
+                (value.toString = value.join.bind(value, ''))
               }
             }
           })

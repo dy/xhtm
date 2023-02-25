@@ -125,3 +125,15 @@ t.skip('#8: Zero value', t => {
 	t.equal(html`<p>Count:${0}</p>`, `<p>Count:0</p>`)
 	t.equal(html`<p>Count:${null}</p>`, `<p>Count:</p>`)
 })
+
+t('#10: value.join is not a function', t => {
+	const html = htm.bind(vhtml)
+
+	let applicationIndex = 1
+
+	html `
+	<form method='POST' action='/settings/setup/applications/edit/${applicationIndex}'>
+		<button id='add' name='add' type='submit'>Update</button>
+	</form>
+	`
+})
