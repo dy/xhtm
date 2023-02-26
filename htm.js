@@ -33,8 +33,7 @@ export default function htm (statics) {
 
     // ...>text<... sequence
     .replace(/(?:^|>)([^<]*)(?:$|<)/g, (match, text, idx, str) => {
-      let close, tag
-
+      let tag, close
       if (idx) {
         str.slice(prev, idx)
           // <abc/> → <abc />
@@ -43,7 +42,8 @@ export default function htm (statics) {
           .map((part, i) => {
             // </tag>
             if (part[0] === '/') {
-              close = tag || part.slice(1) || 1
+              // ignore pairing self-closing tags
+              if (htm.empty[close = tag || part.slice(1) || 1]) return close = 0
             }
             // <tag
             else if (!i) {

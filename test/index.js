@@ -164,3 +164,7 @@ t('#13: newline tags', t => {
 	t.deepEqual(html`<span
 		id='status'>xx</span>`, h('span', {id: 'status'}, 'xx'))
 })
+
+t('#14: closing input', t => {
+	t.deepEqual(html`<input></input>`, h('input', null))
+})
