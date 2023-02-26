@@ -30,7 +30,7 @@ export default function htm (statics) {
     .replace(/<!--[^]*-->/g, '')
     .replace(/<!\[CDATA\[[^]*\]\]>/g, '')
     .replace(/('|")[^\1]*?\1/g, match => (quotes.push(match), QUOTES))
-    .replace(/\s*\n\s*|\s*\n\s*/g,'')
+    .replace(/(?<=^|>|\ue000)\s*\n\s*|\s*\n\s*(?=$|<|\ue000)/g,'')
     .replace(/\s+/g, ' ')
 
     // ...>text<... sequence

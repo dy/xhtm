@@ -159,3 +159,8 @@ t('#11: proper spacing', t => {
 		h('p', null, h('strong', null, 'Hello,'), ' ', h('em', null, 'world!'))
 	)
 })
+
+t('#13: newline tags', t => {
+	t.deepEqual(html`<span
+		id='status'></span>`, h('span', {id: 'status'}))
+})
