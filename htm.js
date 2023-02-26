@@ -30,6 +30,7 @@ export default function htm (statics) {
     .replace(/<!--[^]*-->/g, '')
     .replace(/<!\[CDATA\[[^]*\]\]>/g, '')
     .replace(/('|")[^\1]*?\1/g, match => (quotes.push(match), QUOTES))
+    // FIXME: these two lines aren't the most elegant - can they be moved to text replacer?
     .replace(/(?<=^|>|\ue000)\s*\n\s*|\s*\n\s*(?=$|<|\ue000)/g,'')
     .replace(/\s+/g, ' ')
 
