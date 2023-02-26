@@ -5,9 +5,9 @@ export default function htm (statics) {
 
   const evaluate = (str, parts = [], raw) => {
     let i = 0
-    str = !raw && str === QUOTES ?
+    str = (!raw && str === QUOTES ?
       quotes[quote++].slice(1,-1) :
-      str.replace(/\ue001/g, m => quotes[quote++])
+      str.replace(/\ue001/g, m => quotes[quote++]))
 
     if (!str) return str
     str.replace(/\ue000/g, (match, idx) => {
@@ -30,17 +30,19 @@ export default function htm (statics) {
     .replace(/<!--[^]*-->/g, '')
     .replace(/<!\[CDATA\[[^]*\]\]>/g, '')
     .replace(/('|")[^\1]*?\1/g, match => (quotes.push(match), QUOTES))
-    // .replace(/^\s*\n\s*|\s*\n\s*$/g,'')
+    .replace(/\s*\n\s*|\s*\n\s*/g,'')
     .replace(/\s+/g, ' ')
 
     // ...>text<... sequence
     .replace(/(?:^|>)([^<]*)(?:$|<)/g, (match, text, idx, str) => {
       let close, tag
+
       if (idx) {
         str.slice(prev, idx)
           // <abc/> → <abc />
           .replace(/(\S)\/$/, '$1 /')
-          .split(' ').map((part, i) => {
+          .split(' ')
+          .map((part, i) => {
             // </tag>
             if (part[0] === '/') {
               close = tag || part.slice(1) || 1
@@ -75,7 +77,7 @@ export default function htm (statics) {
       }
       prev = idx + match.length
 
-      if (text && text !== ' ') evaluate((last = 0, text), current, true)
+      if (text) evaluate((last = 0, text), current, true)
     })
 
   if (current[0]) up()

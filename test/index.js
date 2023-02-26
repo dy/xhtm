@@ -3,17 +3,16 @@ import './perf.js'
 import './html.js'
 
 import t from 'tst'
-import htm from '../index.js'
-// import htm from 'htm'
-
-import vhtml from 'vhtml'
+import xhtm from '../index.js'
+import htm from 'htm'
 
 export const h = (tag, props, ...children) => {
 	if (Array.isArray(tag)) tag = tag.join('')
-	for (let p in props) Array.isArray(props[p]) && (props[p] = props[p].join(''))
+	for (let p in props) Array.isArray(props[p]) && (props[p] = props[p] + '')
 	return { tag, props, children }
 }
-export const html = htm.bind(h)
+// export const html = htm.bind(h)
+export const html = xhtm.bind(h)
 
 t('base case', t => {
 	t.deepEqual(html` foo <a b >c${'d'}<e f=g/>h </a>`, [
@@ -31,6 +30,7 @@ t('plain text', t => {
 	t.deepEqual(html`${''}${''}`, ['', '', ''])
 	t.end()
 })
+
 t('tag cases', t => {
 	// special case: both self-closing empty tag and ending tag
 	// t.deepEqual(html`</>`, { tag: '', props: null, children: []})
@@ -99,41 +99,63 @@ t('after tags', t => {
 })
 
 
-t.skip('indentation & spaces', t => {
+t('indentation & spaces', t => {
 	t.deepEqual(html`
-			<a>
-				before
-				${'foo'}
-				<b />
-				${'bar'}
-				after
-			</a>
-		`, h('a', null, 'before', 'foo', h('b', null), 'bar', 'after'));
+		<a>
+			before
+			${'foo'}
+			<b />
+			${'bar'}
+			after
+		</a>
+	`, h('a', null, 'before', 'foo', h('b', null), 'bar', 'after'));
 	t.end()
+})
+
+t('indentation 2', t => {
+  t.is(html`
+    <h1>Hello World!</h1>
+    <p>Some paragraph</p>
+    <p>Another paragraph</p>
+  `, [
+    { tag: 'h1', props: null, children: ['Hello World!']},
+    { tag: 'p', props: null, children: ['Some paragraph']},
+    { tag: 'p', props: null, children: ['Another paragraph']}
+  ])
+})
+
+t('indentation 3', t => {
+	t.is(html`<tr> <td>Headlights  </td></tr>`, h('tr', null, ' ', h('td', null, 'Headlights ')))
 })
 
 
 t('#9: Additional comma', t => {
-	const html = htm.bind(vhtml)
-	t.equal(html`<li src='https://my.site/section/${2}'></li>`, `<li src="https://my.site/section/2"></li>`)
-
+	t.equal(html`<li src='https://my.site/section/${2}'></li>`.props.src, "https://my.site/section/2")
 })
 
 t.skip('#8: Zero value', t => {
 	//NOTE: we don't do it for htm complacency. Hiding zero values is vhtml's issue.
-	const html = htm.bind(vhtml)
 	t.equal(html`<p>Count:${0}</p>`, `<p>Count:0</p>`)
 	t.equal(html`<p>Count:${null}</p>`, `<p>Count:</p>`)
 })
 
 t('#10: value.join is not a function', t => {
-	const html = htm.bind(vhtml)
-
 	let applicationIndex = 1
 
-	html `
+	let el = html`
 	<form method='POST' action='/settings/setup/applications/edit/${applicationIndex}'>
 		<button id='add' name='add' type='submit'>Update</button>
 	</form>
 	`
+})
+
+t('#11: proper spacing', t => {
+	// t.deepEqual(
+	// 	html`<p><strong>Hello,</strong> <em>world!</em></p>`,
+	// 	h('p', null, h('strong', null, 'Hello,'), ' ', h('em', null, 'world!'))
+	// )
+	t.deepEqual(
+		html`<p><strong>Hello,</strong> <em>world!</em></p>`,
+		h('p', null, h('strong', null, 'Hello,'), ' ', h('em', null, 'world!'))
+	)
 })
