@@ -162,5 +162,5 @@ t('#11: proper spacing', t => {
 
 t('#13: newline tags', t => {
 	t.deepEqual(html`<span
-		id='status'></span>`, h('span', {id: 'status'}))
+		id='status'>xx</span>`, h('span', {id: 'status'}, 'xx'))
 })

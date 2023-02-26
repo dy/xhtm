@@ -30,9 +30,6 @@ export default function htm (statics) {
     .replace(/<!--[^]*-->/g, '')
     .replace(/<!\[CDATA\[[^]*\]\]>/g, '')
     .replace(/('|")[^\1]*?\1/g, match => (quotes.push(match), QUOTES))
-    // FIXME: these two lines aren't the most elegant - can they be moved to text replacer?
-    .replace(/(?<=^|>|\ue000)\s*\n\s*|\s*\n\s*(?=$|<|\ue000)/g,'')
-    .replace(/\s+/g, ' ')
 
     // ...>text<... sequence
     .replace(/(?:^|>)([^<]*)(?:$|<)/g, (match, text, idx, str) => {
@@ -42,7 +39,7 @@ export default function htm (statics) {
         str.slice(prev, idx)
           // <abc/> → <abc />
           .replace(/(\S)\/$/, '$1 /')
-          .split(' ')
+          .split(/\s+/)
           .map((part, i) => {
             // </tag>
             if (part[0] === '/') {
@@ -77,6 +74,9 @@ export default function htm (statics) {
         while (last !== close && htm.close[last]) up()
       }
       prev = idx + match.length
+
+      // fix text indentation
+      text=text.replace(/\s*\n\s*|\s*\n\s*/g,'').replace(/\s+/g, ' ')
 
       if (text) evaluate((last = 0, text), current, true)
     })
