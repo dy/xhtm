@@ -25,14 +25,14 @@ export default function htm (statics) {
     current.push(h(last, ...args))
   }
 
-  statics
+  let str = statics
     .join(FIELD)
-    .replace(/<!--[^]*-->/g, '')
+    .replace(/<!--[^]*?-->/g, '')
     .replace(/<!\[CDATA\[[^]*\]\]>/g, '')
     .replace(/('|")[^\1]*?\1/g, match => (quotes.push(match), QUOTES))
 
     // ...>text<... sequence
-    .replace(/(?:^|>)([^<]*)(?:$|<)/g, (match, text, idx, str) => {
+    str.replace(/(?:^|>)([^<]*)(?:$|<)/g, (match, text, idx, str) => {
       let tag, close
       if (idx) {
         str.slice(prev, idx)

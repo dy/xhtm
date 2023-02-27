@@ -168,3 +168,14 @@ t('#13: newline tags', t => {
 t('#14: closing input', t => {
 	t.deepEqual(html`<input></input>`, h('input', null))
 })
+
+t('#15: initial comment', t => {
+	const markup = html`
+		<!-- A comment -->
+		<h1>This is not rendered</h1>
+		<p>Neither is this.</p>
+		<!-- Another comment -->
+		<h2>However, this is rendered correctly.</h2>
+	`
+	t.deepEqual(markup, [h('h1', null, 'This is not rendered'), h('p', null, 'Neither is this.'), h('h2', null, 'However, this is rendered correctly.')])
+})
