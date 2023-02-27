@@ -21,6 +21,7 @@ export default function htm (statics) {
 
   // close level
   const up = () => {
+    // console.log('-level');
     [current, last, ...args] = current
     current.push(h(last, ...args))
     level--
@@ -41,19 +42,24 @@ export default function htm (statics) {
           .replace(/(\S)\/$/, '$1 /')
           .split(/\s+/)
           .map((part, i) => {
-            // </tag>
+            // </tag>, </> .../>
             if (part[0] === '/') {
+              part = part.slice(1)
+              // ignore duplicate empty closers </input>
+              if (EMPTY[part]) return
               // ignore pairing self-closing tags
-              if (htm.empty[close = tag || part.slice(1) || 1]) return close = 0
+              close = tag || part || 1
+              // skip </input>
             }
             // <tag
             else if (!i) {
               tag = evaluate(part)
               // <p>abc<p>def, <tr><td>x<tr>
-              if (typeof tag === 'string') { tag = tag.toLowerCase(); while (htm.close[current[1]+tag]) up() }
+              if (typeof tag === 'string') { tag = tag.toLowerCase(); while (CLOSE[current[1]+tag]) up() }
               current = [current, tag, null]
               level++
-              if (htm.empty[tag]) close = tag
+              // console.log('+level', tag)
+              if (EMPTY[tag]) close = tag
             }
             // attr=...
             else if (part) {
@@ -70,12 +76,11 @@ export default function htm (statics) {
             }
           })
       }
+
       if (close) {
-        // FIXME: this validator is too lengthy - maybe can be enhanced?
-        // if (typeof close === 'string' && close !== current[1] && !htm.empty[current[1]] && !htm.close[current[1]]) err(`Close tag \`${close}\` doesnt match open tag \`${current[1]}\``)
         up()
         // if last child is optionally closable - close it too
-        while (last !== close && htm.close[last]) up()
+        while (last !== close && CLOSE[last]) up()
       }
       prev = idx + match.length
 
@@ -85,7 +90,7 @@ export default function htm (statics) {
       if (text) evaluate((last = 0, text), current, true)
     })
 
-  if (current[0]) up()
+  if (current[0] && CLOSE[current[1]]) up()
 
   if (level) err(`Unclosed \`${current[1]}\`.`)
 
@@ -95,7 +100,7 @@ export default function htm (statics) {
 const err = (msg) => { throw SyntaxError(msg) }
 
 // self-closing elements
-htm.empty = {}
+const EMPTY = htm.empty = {}
 
 // optional closing elements
-htm.close = {}
+const CLOSE = htm.close = {}

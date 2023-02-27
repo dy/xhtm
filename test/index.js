@@ -192,17 +192,25 @@ t('#16: optional closing tags', t => {
 			<main id='content'></main>
 		</div>`
 	})
+	t.throws(() => {
+		const markup2 = html`<div>
+		<div>
+		<img id='kitten-sleeping' src='/😸/images/kitten-sleeping.svg' alt='' >
+		<main id='content'></main>
+		</div>`
+		console.log(markup2)
+	})
 	//TODO
-	// t.throws(() => {
-	// 	const markup2 = html`<div>
-	// 	<div>
-	// 		<img id='kitten-sleeping' src='/😸/images/kitten-sleeping.svg' alt='' >
-	// 		<main id='content'></main>
-	// 	</div>`
-	// 	console.log(markup2)
-	// })
 	// t.throws(() => {
 	// 	const markup3 = html`<div></dvi>`
 	// 	console.log(markup3)
 	// })
+})
+
+t('#17: sequence of empties', t => {
+	let markup = html`
+	<form>
+		<input name='name' type='text' required value=''/>
+		<input name='address' type='text' required value=''/>
+	</form>`
 })
