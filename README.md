@@ -10,8 +10,6 @@
 _XHTM_ is alternative implementation of [HTM](https://ghub.io/htm) without HTM-specific limitations.
 Low-level machinery is rejected in favor of readability and better HTML support.
 
-Originally that was just state of art HTML parser implementation ( ~60LOC, best from 10 variants in R&D branches), but turned out it has ideal qualities for [spect/h](https://ghub.io/spect) (tiny size, no cache, HTML support, extensibility).
-
 ## Differences from HTM
 
 * Self-closing tags support `` htm`<input><br>` `` → `[h('input'), h('br')]`.
@@ -51,6 +49,9 @@ render(html`
 
 For `htm` manual, refer to [htm docs](https://ghub.io/htm).
 
+## Justification
+
+Originally that was just state of art HTML parser implementation ( ~60LOC, best from 10 variants in R&D branches), but turned out it has ideal qualities for [spect/h](https://ghub.io/spect) (tiny size, no cache, HTML support, extensibility).
 
 <!--
 ## Comparison
