@@ -1,7 +1,7 @@
 const FIELD = '\ue000', QUOTES = '\ue001'
 
 export default function htm (statics) {
-  let h = this, prev = 0, current = [null], field = 0, args, name, value, quotes = [], quote = 0, last
+  let h = this, prev = 0, current = [null], field = 0, args, name, value, quotes = [], quote = 0, last, level = 0
 
   const evaluate = (str, parts = [], raw) => {
     let i = 0
@@ -23,6 +23,7 @@ export default function htm (statics) {
   const up = () => {
     [current, last, ...args] = current
     current.push(h(last, ...args))
+    level--
   }
 
   let str = statics
@@ -51,6 +52,7 @@ export default function htm (statics) {
               // <p>abc<p>def, <tr><td>x<tr>
               if (typeof tag === 'string') { tag = tag.toLowerCase(); while (htm.close[current[1]+tag]) up() }
               current = [current, tag, null]
+              level++
               if (htm.empty[tag]) close = tag
             }
             // attr=...
@@ -69,8 +71,10 @@ export default function htm (statics) {
           })
       }
       if (close) {
+        // FIXME: this validator is too lengthy - maybe can be enhanced?
+        // if (typeof close === 'string' && close !== current[1] && !htm.empty[current[1]] && !htm.close[current[1]]) err(`Close tag \`${close}\` doesnt match open tag \`${current[1]}\``)
         up()
-        // if last child is closable - close it too
+        // if last child is optionally closable - close it too
         while (last !== close && htm.close[last]) up()
       }
       prev = idx + match.length
@@ -83,8 +87,12 @@ export default function htm (statics) {
 
   if (current[0]) up()
 
+  if (level) err(`Unclosed \`${current[1]}\`.`)
+
   return current.length < 3 ? current[1] : (current.shift(), current)
 }
+
+const err = (msg) => { throw SyntaxError(msg) }
 
 // self-closing elements
 htm.empty = {}

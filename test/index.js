@@ -179,3 +179,30 @@ t('#15: initial comment', t => {
 	`
 	t.deepEqual(markup, [h('h1', null, 'This is not rendered'), h('p', null, 'Neither is this.'), h('h2', null, 'However, this is rendered correctly.')])
 })
+
+t('#16: optional closing tags', t => {
+	const markup = html`<div>
+	<div>
+		<img id='kitten-sleeping' src='/😸/images/kitten-sleeping.svg' alt='' />
+	</div></div>`
+	t.throws(() => {
+		const markup1 = html`<div>
+		<div>
+			<img id='kitten-sleeping' src='/😸/images/kitten-sleeping.svg' alt='' />
+			<main id='content'></main>
+		</div>`
+	})
+	//TODO
+	// t.throws(() => {
+	// 	const markup2 = html`<div>
+	// 	<div>
+	// 		<img id='kitten-sleeping' src='/😸/images/kitten-sleeping.svg' alt='' >
+	// 		<main id='content'></main>
+	// 	</div>`
+	// 	console.log(markup2)
+	// })
+	// t.throws(() => {
+	// 	const markup3 = html`<div></dvi>`
+	// 	console.log(markup3)
+	// })
+})
