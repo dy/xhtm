@@ -21,7 +21,7 @@ export default function htm (statics) {
 
   // close level
   const up = () => {
-    // console.log('-level');
+    // console.log('-level', current);
     [current, last, ...args] = current
     current.push(h(last, ...args))
     level--
@@ -36,6 +36,7 @@ export default function htm (statics) {
     // ...>text<... sequence
   str.replace(/(?:^|>)((?:[^<]|<[^\w\ue000\/?!>])*)(?:$|<)/g, (match, text, idx, str) => {
     let tag, close
+
     if (idx) {
       str.slice(prev, idx)
         // <abc/> → <abc />
@@ -78,6 +79,7 @@ export default function htm (statics) {
     }
 
     if (close) {
+      if (!current[0]) err(`Wrong close tag \`${close}\``)
       up()
       // if last child is optionally closable - close it too
       while (last !== close && CLOSE[last]) up()
@@ -104,6 +106,3 @@ const EMPTY = htm.empty = {}
 
 // optional closing elements
 const CLOSE = htm.close = {}
-
-// chars to escape
-const ESCAPE = htm.escape = {}

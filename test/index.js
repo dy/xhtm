@@ -215,8 +215,8 @@ t('#17: sequence of empties', t => {
 	</form>`
 })
 
-t.only('#18: unescaped block', t => {
-	console.log(html`<p><div onclick=${`&<>"'`}></div></p>`)
+t('#18: unescaped block', t => {
+	t.throws(() => html`<p>123<div onclick=x>456</div>789</p>`, /close/)
 })
 
 t('#20: unescaped chars', t => {
