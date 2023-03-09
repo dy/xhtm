@@ -1,5 +1,8 @@
 const FIELD = '\ue000', QUOTES = '\ue001'
 
+const map = { '&':'amp', '<':'lt', '>':'gt', '"':'quot', "'":'apos' }
+const escape = str => String(str).replace(/[&<>"']/g, s => `&${map[s]};`)
+
 export default function htm (statics) {
   let h = this, prev = 0, current = [null], field = 0, args, name, value, quotes = [], quote = 0, last, level = 0
 
@@ -13,7 +16,9 @@ export default function htm (statics) {
     str.replace(/\ue000/g, (match, idx) => {
       if (idx) parts.push(str.slice(i, idx))
       i = idx + 1
-      return parts.push(arguments[++field])
+      let fieldContents = arguments[++field]
+      fieldContents = typeof fieldContents === 'string' ? escape(fieldContents) : fieldContents
+      return parts.push(fieldContents)
     })
     if (i < str.length) parts.push(str.slice(i))
     return parts.length > 1 ? parts : parts[0]

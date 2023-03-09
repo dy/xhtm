@@ -162,3 +162,28 @@ t('html: directives', t => {
   t.is(html`<!-- comment -->`, undefined)
   t.is(html`<!--[if expression]> HTML <![endif]-->`, undefined)
 })
+
+t('safer fields', t => {
+	t.is(html`
+		<script>alert('This is fine')</script>
+		<style>.soIsThis { font-size: 3em; }</style>
+		${'<script>alert("But it avoids this injection attempt")</script>'}
+		<pre><code>${'<p>And it auto-escapes code snippets.</p>'}</code></pre>
+	`,
+	[
+	  { tag: 'script', props: null, children: [ "alert('This is fine')" ] },
+	  {
+	    tag: 'style',
+	    props: null,
+	    children: [ '.soIsThis { font-size: 3em; }' ]
+	  },
+	  '&lt;script&gt;alert(&quot;But it avoids this injection attempt&quot;)&lt;/script&gt;',
+		{
+			tag: 'pre',
+			props: null,
+			children: [
+				{tag: 'code', props: null, children: ['&lt;p&gt;And it auto-escapes code snippets.&lt;/p&gt;']}
+			]
+		}
+	])
+})
