@@ -215,6 +215,10 @@ t('#17: sequence of empties', t => {
 	</form>`
 })
 
+t.only('#18: unescaped block', t => {
+	console.log(html`<p><div onclick=${`&<>"'`}></div></p>`)
+})
+
 t('#20: unescaped chars', t => {
-	t.is(html`<p>this < that</p>`, {tag:'p',props:null,children:['this &lt; that']})
+	t.is(html`<p>this < that</p>`, {tag:'p',props:null,children:['this < that']})
 })

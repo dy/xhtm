@@ -32,10 +32,9 @@ export default function htm (statics) {
     .replace(/<!--[^]*?-->/g, '')
     .replace(/<!\[CDATA\[[^]*\]\]>/g, '')
     .replace(/('|")[^\1]*?\1/g, match => (quotes.push(match), QUOTES))
-    .replace(/<(?![\w\uE000\/\!\?>])/g, '&lt;') // a < b -> a &lt; b
 
     // ...>text<... sequence
-  str.replace(/(?:^|>)([^<]*)(?:$|<)/g, (match, text, idx, str) => {
+  str.replace(/(?:^|>)((?:[^<]|<[^\w\ue000\/?!>])*)(?:$|<)/g, (match, text, idx, str) => {
     let tag, close
     if (idx) {
       str.slice(prev, idx)
