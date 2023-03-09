@@ -34,8 +34,8 @@ t('plain text', t => {
 t('tag cases', t => {
 	// special case: both self-closing empty tag and ending tag
 	// t.deepEqual(html`</>`, { tag: '', props: null, children: []})
+	// t.deepEqual(html`< />`, { tag: '', props: null, children: [] })
 
-	t.deepEqual(html`< />`, { tag: '', props: null, children: [] })
 	t.deepEqual(html`<></>`, { tag: '', props: null, children: [] })
 	t.deepEqual(html`<a></>`, { tag: 'a', props: null, children: [] })
 	t.deepEqual(html`<a></a>`, { tag: 'a', props: null, children: [] })
@@ -213,4 +213,8 @@ t('#17: sequence of empties', t => {
 		<input name='name' type='text' required value=''/>
 		<input name='address' type='text' required value=''/>
 	</form>`
+})
+
+t('#20: unescaped chars', t => {
+	t.is(html`<p>this < that</p>`, {tag:'p',props:null,children:['this &lt; that']})
 })

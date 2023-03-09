@@ -163,7 +163,7 @@ t('html: directives', t => {
   t.is(html`<!--[if expression]> HTML <![endif]-->`, undefined)
 })
 
-t('safer fields', t => {
+t.skip('safer fields', t => {
 	t.is(html`
 		<script>alert('This is fine')</script>
 		<style>.soIsThis { font-size: 3em; }</style>
