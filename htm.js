@@ -1,7 +1,7 @@
 const FIELD = '\ue000', QUOTES = '\ue001'
 
 export default function htm (statics) {
-  let h = this, prev = 0, current = [null], field = 0, args, name, value, quotes = [], quote = 0, last, level = 0
+  let h = this, prev = 0, current = [null], field = 0, args, name, value, quotes = [], quote = 0, last, level = 0, pre = false
 
   const evaluate = (str, parts = [], raw) => {
     let i = 0
@@ -24,7 +24,7 @@ export default function htm (statics) {
     // console.log('-level', current);
     [current, last, ...args] = current
     current.push(h(last, ...args))
-    level--
+    if (pre === level--) pre = false // reset <pre>
   }
 
   let str = statics
@@ -59,6 +59,7 @@ export default function htm (statics) {
             if (typeof tag === 'string') { tag = tag.toLowerCase(); while (CLOSE[current[1]+tag]) up() }
             current = [current, tag, null]
             level++
+            if (!pre && PRE[tag]) pre = level
             // console.log('+level', tag)
             if (EMPTY[tag]) close = tag
           }
@@ -87,7 +88,7 @@ export default function htm (statics) {
     prev = idx + match.length
 
     // fix text indentation
-    if (!PRE[tag]) text=text.replace(/\s*\n\s*|\s*\n\s*/g,'').replace(/\s+/g, ' ')
+    if (!pre) text = text.replace(/\s*\n\s*|\s*\n\s*/g,'').replace(/\s+/g, ' ')
 
     if (text) evaluate((last = 0, text), current, true)
   })

@@ -224,5 +224,16 @@ t('#20: unescaped chars', t => {
 })
 
 t('#23: pre elements', t => {
-	t.is(html`<pre>  a b \n  c </pre>`, {tag:'pre',props:null,children:['  a b \n  c ']})
+	t.is(html`<x> 1 <code>  a <pre> b \n  c <y>  d\n\ne  </y></pre> </code> 2 </x>`,
+	{
+		tag: 'x', props: null, children: [
+			' 1 ',
+			{tag:'code',props:null, children:[
+				'  a ',
+				{tag:'pre',props:null, children:[' b \n  c ', {tag:'y', props:null, children: ['  d\n\ne  ']}]},
+				' '
+			]},
+			' 2 '
+		]
+	})
 })
