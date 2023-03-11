@@ -18,6 +18,7 @@ Low-level machinery is rejected in favor of readability and better HTML support.
 * Interpolated props are exposed as arrays `` html`<a class="a ${b} c"/>` `` → `h('a', { class: ['a ', b, ' c'] })`.
 * Calculated tag names [#109](https://github.com/developit/htm/issues/109) support.
 * Ignoring null-like arguments (customizable) [#129](https://github.com/developit/htm/issues/129).
+* Spaces formatting closer to HTML; elements with preserved formatting ([#23](https://github.com/dy/xhtm/issues/23)).
 * No integrations exported, no babel compilers.
 * No cache.
 

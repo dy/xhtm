@@ -27,4 +27,6 @@ for (let tag in close) {
     htm.close[tag] = htm.close[tag + closer] = true
 }
 
+'pre samp textarea'.split(' ').map(v => htm.pre[v] = true)
+
 export default htm

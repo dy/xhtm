@@ -87,7 +87,7 @@ export default function htm (statics) {
     prev = idx + match.length
 
     // fix text indentation
-    text=text.replace(/\s*\n\s*|\s*\n\s*/g,'').replace(/\s+/g, ' ')
+    if (!PRE[tag]) text=text.replace(/\s*\n\s*|\s*\n\s*/g,'').replace(/\s+/g, ' ')
 
     if (text) evaluate((last = 0, text), current, true)
   })
@@ -106,3 +106,6 @@ const EMPTY = htm.empty = {}
 
 // optional closing elements
 const CLOSE = htm.close = {}
+
+// preformatted text elements
+const PRE = htm.pre = {}

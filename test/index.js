@@ -222,3 +222,7 @@ t('#18: unescaped block', t => {
 t('#20: unescaped chars', t => {
 	t.is(html`<p>this < that</p>`, {tag:'p',props:null,children:['this < that']})
 })
+
+t('#23: pre elements', t => {
+	t.is(html`<pre>  a b \n  c </pre>`, {tag:'pre',props:null,children:['  a b \n  c ']})
+})
