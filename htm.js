@@ -88,7 +88,7 @@ export default function htm (statics) {
     prev = idx + match.length
 
     // fix text indentation
-    if (!pre) text = text.replace(/\s*\n\s*|\s*\n\s*/g,'').replace(/\s+/g, ' ')
+    if (!pre) text = text.replace(/\s*\n\s*/g,'').replace(/\s+/g, ' ')
 
     if (text) evaluate((last = 0, text), current, true)
   })
