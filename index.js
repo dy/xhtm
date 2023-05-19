@@ -1,6 +1,7 @@
 import htm from './htm.js'
 
-'area base br col command embed hr img input keygen link meta param source track wbr ! !doctype ? ?xml'.split(' ').map(v => htm.empty[v] = true)
+// https://github.com/wooorm/html-void-elements/blob/main/index.js
+'area base basefont bgsound br col command embed frame hr image img input keygen link meta param source track wbr ! !doctype ? ?xml'.split(' ').map(v => htm.empty[v] = true)
 
 // https://html.spec.whatwg.org/multipage/syntax.html#optional-tags
 // closed by the corresponding tag or end of parent content
