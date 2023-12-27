@@ -52,7 +52,8 @@ For `htm` manual, refer to [htm docs](https://ghub.io/htm).
 
 ## Justification
 
-Originally that was just state of art HTML parser implementation ( ~60LOC, best from 10 variants in R&D branches), but turned out it has ideal qualities for [hyperf](https://github.com/dy/hyperf) (tiny size, no cache, HTML support, extensibility).
+Originally that was just minimal HTML parser implementation (~60LOC), best from 10 variants in R&D branches.
+Generally HTM has better performance & cache, but stricter limitations, so unless your project needs HTML support, it's recommended to use HTM. 
 
 <!--
 ## Comparison
