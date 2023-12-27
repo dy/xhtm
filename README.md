@@ -52,9 +52,9 @@ For `htm` manual, refer to [htm docs](https://ghub.io/htm).
 
 ## Justification
 
-Originally that was just minimal HTML parser implementation (~60LOC), best from 10 variants in R&D branches.
-HTM has better performance, but stricter limitations, so if your app renders components multiple times, then HTM can be a better choice.
-But if you need HTML support and no so frequent updates, then XHTM is better - it's still faster than `innerHTML`.  
+Originally that was just minimal HTML parser implementation (~60LOC), best from 10 variants in R&D branches.<br/>
+HTM has better performance, but stricter limitations, so if your app renders components multiple times, then HTM can be a better choice.<br/>
+But if you need HTML support and no so frequent updates, then XHTM is a good choice<!-- - it's still faster than `innerHTML`-->.  
 
 <!--
 ## Comparison
