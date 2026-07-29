@@ -2,7 +2,7 @@
 
 <p>
 <a href="https://github.com/dy/xhtm/actions/workflows/tests.js.yml"><img src="https://github.com/dy/xhtm/actions/workflows/tests.js.yml/badge.svg"/></a>
-<a href="https://bundlephobia.com/result?p=xhtm"><img alt="size" src="https://img.shields.io/bundlephobia/minzip/xhtm?label=size"></a>
+<a href="https://bundlejs.com/?q=xhtm"><img alt="size" src="https://deno.bundlejs.com/badge?q=xhtm"></a>
 <a href="https://npmjs.org/package/xhtm"><img alt="version" src="https://img.shields.io/npm/v/xhtm"></a>
 <img src="https://img.shields.io/badge/stability-unstable-yellow" alt="stability"/>
 </p>
@@ -29,8 +29,9 @@ Low-level machinery is rejected in favor of readability and better HTML support.
 
 ## Installation & Usage
 
-
-[![NPM](https://nodei.co/npm/xhtm.png?mini=true)](https://nodei.co/npm/xhtm/)
+```sh
+npm i xhtm
+```
 
 `xhtm` is by default fully compatible with `htm` and can be used as drop-in replacement.
 
