@@ -15,7 +15,7 @@ Low-level machinery is rejected in favor of readability and better HTML support.
 * Self-closing tags support `` htm`<input><br>` `` → `[h('input'), h('br')]`.
 * HTML directives `<!doctype>`, `<?xml?>` etc. support [#91](https://github.com/developit/htm/issues/91).
 * Optionally closed tags support `<p>foo<p>bar` → `<p>foo</p><p>bar</p>` [#91](https://github.com/developit/htm/issues/91).
-* Interpolated props are exposed as arrays `` html`<a class="a ${b} c"/>` `` → `h('a', { class: ['a ', b, ' c'] })`.
+* Multi-part props join to string, falsy fields turn empty `` html`<a class="a ${0} ${false}"/>` `` → `h('a', { class: 'a 0 ' })`; single-field values stay raw `` html`<a items=${[1]}/>` `` → `h('a', { items: [1] })`.
 * Calculated tag names [#109](https://github.com/developit/htm/issues/109) support.
 * Ignoring null-like arguments (customizable) [#129](https://github.com/developit/htm/issues/129).
 * Spaces formatting closer to HTML; elements with preserved formatting ([#23](https://github.com/dy/xhtm/issues/23)).

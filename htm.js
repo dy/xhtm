@@ -13,21 +13,18 @@ export default function htm(statics) {
 const build = (h, node, args) => {
   if (typeof node === 'number') return args[node]
   if (typeof node !== 'object') return node
-  let props = null, v
+  let props = null
   if (node.p) {
     props = {}
     for (let e of node.p)
-      e.length < 2 ? Object.assign(props, args[e[0]]) :
-        (Array.isArray(v = part(e[1], args)) &&
-          // if prop value is array - make sure it serializes as string without csv
-          (v.toString = v.join.bind(v, '')),
-          props[part(e[0], args)] = v)
+      e.length < 2 ? Object.assign(props, args[e[0]]) : props[part(e[0], args)] = part(e[1], args)
   }
   return h(part(node.t, args), props, ...node.c.map(c => build(h, c, args)))
 }
 
+// multi-part value joins to a string (nullish/false fields turn empty), single field stays raw
 const part = (v, args) => typeof v === 'number' ? args[v] :
-  Array.isArray(v) ? v.map(x => typeof x === 'number' ? args[x] : x) : v
+  Array.isArray(v) ? v.map(x => (x = typeof x === 'number' ? args[x] : x, x == null || x === false ? '' : x)).join('') : v
 
 // parse statics into a reusable tree
 const parse = (statics) => {

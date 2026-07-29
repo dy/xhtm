@@ -7,8 +7,6 @@ import xhtm from '../index.js'
 import htm from 'htm'
 
 export const h = (tag, props, ...children) => {
-	if (Array.isArray(tag)) tag = tag.join('')
-	for (let p in props) Array.isArray(props[p]) && (props[p] = props[p] + '')
 	return { tag, props, children }
 }
 // export const html = htm.bind(h)
@@ -81,11 +79,21 @@ t.skip('malformed html', t => {
 	t.end()
 })
 
-t('ignore null values', t => {
+t('ignore falsy values in multi-part attrs', t => {
 	t.deepEqual(
 		html`<div str="${false} ${null} ${undefined}" />`,
-		{ tag: 'div', props: { str: "false  " }, children: [] }
+		{ tag: 'div', props: { str: "  " }, children: [] }
 	);
+
+	t.end()
+})
+
+t('multi-part attr joins to string, single field stays raw', t => {
+	t.deepEqual(html`<a c="a${'b'}c${'d'}"/>`.props.c, 'abcd')
+	t.deepEqual(html`<a c="x ${false}"/>`.props.c, 'x ')
+	t.deepEqual(html`<a c="x ${0}"/>`.props.c, 'x 0')
+	t.deepEqual(html`<a c=${[1, 2]}/>`.props.c, [1, 2])
+	t.deepEqual(html`<h${2}>x</h${2}>`.tag, 'h2')
 
 	t.end()
 })
