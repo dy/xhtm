@@ -20,7 +20,6 @@ Low-level machinery is rejected in favor of readability and better HTML support.
 * Ignoring null-like arguments (customizable) [#129](https://github.com/developit/htm/issues/129).
 * Spaces formatting closer to HTML; elements with preserved formatting ([#23](https://github.com/dy/xhtm/issues/23)).
 * No integrations exported, no babel compilers.
-* No cache.
 
 <!--
 * Dynamic attribute names [#124](https://github.com/developit/htm/issues/124).
@@ -52,8 +51,8 @@ For `htm` manual, refer to [htm docs](https://ghub.io/htm).
 
 ## Justification
 
-Generally HTM is a better choice, since it has better performance and enables caching.<br/>
-But if your app doesn't render components frequently or you need HTML support, then XHTM can be a good choice.  
+XHTM caches parsed templates: repeated renders are faster than HTM, first-time parse is slower.
+HTM is smaller; XHTM supports real HTML (self-closing, optional-close tags, directives).<br/>
 Originally that was just minimal HTML parser implementation (~60LOC), best from 10 variants in R&D branches.<br/>
 
 <!--

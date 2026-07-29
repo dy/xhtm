@@ -1,5 +1,6 @@
 import t from 'tst'
 import { h, html } from './index.js'
+import xhtm from '../index.js'
 
 t('html: self-closing tags', t => {
   t.is(html`<input>`, { tag: 'input', props: null, children: [] })
@@ -186,4 +187,19 @@ t.skip('safer fields', t => {
 			]
 		}
 	])
+})
+
+t('cache: repeated calls stay correct and independent', t => {
+	const go = x => html`<a b=${x} c="x ${x}">${x}</a>`
+	t.is(go(1), { tag: 'a', props: { b: 1, c: 'x 1' }, children: [1] })
+	t.is(go(2), { tag: 'a', props: { b: 2, c: 'x 2' }, children: [2] })
+
+	// mutating a result must not poison the cached template
+	let r = go(3)
+	r.props.z = 1, r.children.push('junk')
+	t.is(go(4), { tag: 'a', props: { b: 4, c: 'x 4' }, children: [4] })
+
+	// same statics, different h bindings share the parse, not the output
+	const html2 = xhtm.bind((tag, props, ...children) => [tag, props, children])
+	t.is(html2`<a b=${5}>${5}</a>`, ['a', { b: 5 }, [5]])
 })

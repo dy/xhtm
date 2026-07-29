@@ -36,7 +36,7 @@ t('creation', (t) => {
 	t.end()
 });
 
-t.skip('usage', (t) => {
+t('usage', (t) => {
 	const results = [];
 	const Foo = ({ name }) => html`<div class="foo">${name}</div>`;
 	let count = 0;
