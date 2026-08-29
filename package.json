@@ -8,12 +8,16 @@
   "type": "module",
   "scripts": {
     "test": "node test/index.js",
-    "build": "microbundle build --no-sourcemap -f modern --target web && shx mv index.modern.js index.min.js"
+    "build": "npm run build:modern && npm run build:umd",
+    "build:modern": "microbundle build --no-sourcemap --format modern --target web --name htm && shx mv index.modern.js index.min.js",
+    "build:umd": "microbundle build --no-sourcemap --format umd --target web --name htm --no-compress && terser index.umd.js --config-file terser.config.json -o index.umd.min.js"
   },
   "files": [
     "index.js",
     "htm.js",
     "index.min.js",
+    "index.umd.js",
+    "index.umd.min.js",
     "index.d.ts"
   ],
   "repository": "dy/xhtm",
